@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'WatchStore';
+$dbname = 'SHOP_DONG_HO';
 $username = 'root';
 $password = '';
 
