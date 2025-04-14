@@ -33,12 +33,32 @@ CREATE TABLE SanPham (
     MaDanhMuc INT,
     ThuongHieu VARCHAR(100),
     Gia DECIMAL(10,2),
+    Xuatxu VARCHAR(20),
     MoTa TEXT,
     HinhAnh VARCHAR(255),
     SoLuongTon INT,
     NgayTao DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (MaDanhMuc) REFERENCES DanhMuc(MaDanhMuc)
 );
+
+CREATE TABLE ChiTietSanPham (
+    MaCTSP INT PRIMARY KEY AUTO_INCREMENT,
+    MaSP INT,
+    ThuongHieu VARCHAR(100),
+    XuatXu VARCHAR(100),
+    DoiTuong VARCHAR(50),
+    DongSanPham VARCHAR(100),
+    KhangNuoc VARCHAR(50),
+    LoaiMay VARCHAR(100),
+    ChatLieuKinh VARCHAR(100),
+    ChatLieuDay VARCHAR(100),
+    SizeMat VARCHAR(20),
+    DoDay VARCHAR(20),
+    Series VARCHAR(100),
+    TienIch TEXT,
+    FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP)
+);
+
 
 CREATE TABLE KhuyenMai (
     MaKM INT PRIMARY KEY AUTO_INCREMENT,
@@ -100,3 +120,48 @@ CREATE TABLE ThanhToan (
     TrangThaiTT VARCHAR(50) DEFAULT 'Chưa thanh toán',
     FOREIGN KEY (MaDH) REFERENCES DonHang(MaDH)
 );
+
+INSERT INTO SanPham (TenSP, MaDanhMuc, ThuongHieu, Gia, MoTa, HinhAnh, SoLuongTon)
+VALUES 
+(N'Đồng Hồ Casio Mtp Nam MTP-1374L-7AVDF', 1, N'Casio', 1250000, N'Đồng hồ nam dây da, thiết kế cổ điển', 'casio1.jpg', 20),
+(N'Daniel Wellington Petite Melrose', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+
+
+INSERT INTO Admin (TenDangNhap, MatKhau, HoTen, Email, VaiTro)
+VALUES 
+('admin01', 'matkhau123', N'Nguyễn Văn A', 'admin01@email.com', 'Admin'),
+('admin02', 'matkhau456', N'Trần Thị B', 'admin02@email.com', 'Admin');
+
+
+INSERT INTO DanhMuc (TenDanhMuc, MoTa)
+VALUES 
+(N'Đồng hồ nam', N'Các mẫu đồng hồ dành cho nam giới'),
+(N'Đồng hồ nữ', N'Các mẫu đồng hồ dành cho nữ giới');
+
+
+INSERT INTO KhachHang (HoTen, Email, MatKhau, SoDienThoai, DiaChi)
+VALUES 
+(N'Lê Văn C', 'le.c@email.com', 'pass123', '0901234567', N'123 Nguyễn Trãi, Hà Nội'),
+(N'Phạm Thị D', 'pham.d@email.com', 'pass456', '0987654321', N'456 Trần Hưng Đạo, TP.HCM');
+
+
+
+INSERT INTO KhuyenMai (MaCode, MoTa, ChietKhauPhanTram, NgayBatDau, NgayKetThuc, KichHoat)
+VALUES 
+('TET2025', N'Khuyến mãi Tết 2025', 10.00, '2025-01-15', '2025-02-15', TRUE),
+('SUMMER25', N'Giảm giá hè 2025', 15.50, '2025-06-01', '2025-06-30', TRUE),
+('BLACKFRI', N'Khuyến mãi Black Friday', 25.00, '2025-11-25', '2025-11-30', FALSE);
+
+
+INSERT INTO ChiTietSanPham (
+    MaSP, ThuongHieu, XuatXu, DoiTuong, DongSanPham,
+    KhangNuoc, LoaiMay, ChatLieuKinh, ChatLieuDay,
+    SizeMat, DoDay, Series, TienIch
+)
+VALUES (
+    1, 'Casio', 'Nhật', 'Nam', 'Casio MTP',
+    '5atm', 'Pin/Quartz', 'Kính Khoáng', 'Dây Da',
+    '43.5mm', '10.4mm', 'Casio MTP 1374',
+    N'Dạ quang, Lịch thứ, Lịch ngày, Giờ, phút, giây, Lịch 24 giờ'
+);
+
