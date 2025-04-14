@@ -124,6 +124,21 @@ CREATE TABLE ThanhToan (
 INSERT INTO SanPham (TenSP, MaDanhMuc, ThuongHieu, Gia, MoTa, HinhAnh, SoLuongTon)
 VALUES 
 (N'Đồng Hồ Casio Mtp Nam MTP-1374L-7AVDF', 1, N'Casio', 1250000, N'Đồng hồ nam dây da, thiết kế cổ điển', 'casio1.jpg', 20),
+(N'Orient Star Nam RE-AT0018S00B', 2, N'Orient', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Orient Nữ RA-AG0729S30B (RA-AG0726S00B)', 2, N'Orient', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Đồng Hồ Orient SK RA-AA0B02R39B', 2, N'OrientOrient', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Seiko 5 quân đội Nam SNK807K2', 2, N'Seiko', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Seiko 5 Nam SNKD99K1', 2, N'Seiko', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Seiko Nam SNKE04K1', 2, N'Seiko', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Citizen Nam NJ0151-53W', 2, N'Citizen', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Citizen Nữ EU6060-55D', 2, N'Citizen', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Olym Pianus Nam OP990-45ADGS-GL-D', 2, N'Olym Pianus', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Olym Pianus Nữ OP990-45DGS-GL-D', 2, N'Olym Pianus', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Olym Pianus Nam OP990-45.24ADGS-GL-T', 2, N'Olym Pianus', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Bentley Nam BL1869-101MWBB', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Bentley Nam BL1784-252KBB-S2-M', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Bentley Nam BL1832-25MKWD', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
+(N'Bentley Nam BL2096-152KBI-S', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
 (N'Daniel Wellington Petite Melrose', 2, N'DW', 3200000, N'Đồng hồ nữ thời trang dây kim loại', 'dw1.jpg', 15);
 
 
