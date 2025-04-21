@@ -34,12 +34,12 @@ $products = $db->query($query, $params);
 // Display products
 if (!empty($products)):
     foreach ($products as $product):
-        $image_url = !empty($product['HinhAnh']) ? $product['HinhAnh'] : 'images/default-watch.jpg';
+        $image_url = !empty($product['HinhAnh']) ? 'public/images/' . $product['HinhAnh'] : 'public/images/casio0.jpg';
 ?>
         <div class="product-card">
             <a href="product-detail.php?id=<?= $product['MaSP'] ?>">
                 <div class="product-image">
-                    <img src="<?= $image_url ?>" alt="<?= htmlspecialchars($product['TenSP']) ?>">
+                    <img class="product-img" src="<?= $image_url ?>" alt="<?= htmlspecialchars($product['TenSP']) ?>">
                 </div>
                 <div class="product-info">
                     <h3><?= htmlspecialchars($product['TenSP']) ?></h3>
