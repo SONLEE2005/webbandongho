@@ -1,217 +1,205 @@
 <?php
-    session_start();
-    $tenNguoiDung = isset($_SESSION["hoTen"]) ? htmlspecialchars($_SESSION["hoTen"]) : null;
-    $isLoggedIn = isset($_SESSION["email"]);
-?> <!-- Thêm khúc này để lấy tên người dùng, email bắt đầu phiên làm việc-->
+    include 'weblayout/topmenu.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Watch Shop</title>
-    <link rel="stylesheet" href="public/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style> /* style cho phần menu tài khoản */
-        .dropdown {
-            position: relative;
-            display: inline-block;
+    <title>User end</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .dropbtn {
-            cursor: pointer;
-            padding: 10px;
-            text-decoration: none;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 120px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 4px;
-        }
-        .dropdown-content a {
-            color: black;
-            padding: 10px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 999;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+        html, body {
+            height: 100%; /* Ensure the body takes the full height of the viewport */
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Make the body a flex container */
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #header > div {
+            margin-left: 100px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
-        .modal-content {
-            width: 400px;
-            height: 500px;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        #header h1 {
+            margin: 0;
         }
-        .modal .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            color: #0e0d0d;
+        #header > nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        #header > nav > ul {
+            margin-left: 50px;
+            margin-right: 100px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li > input {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        ul > button {
+            padding: 5px 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: color 0.3s;
-            border-radius: 8px;
-            border: 1px solid red;
-            width: 30px;
-            text-align: center;
-            background-color: red;
         }
-        .close-btn:hover {
-            transform: scale(1.1);
-        } 
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+            border: 1px solid white;
+            padding: 5px 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        #topmenu {
+            display: flex;
+            justify-content: center;
+            background-color: #ceb736;
+            padding: 10px 20px;
+        }
+        #topmenu ul {
+            display: flex;
+            list-style-type: none;
+            flex-direction: row;
+            gap: 15px;
+            align-items: center;
+            margin-left: 100px;
+        }
+        #main-content {
+            display: flex;
+            margin-top: 0px;
+            flex: 1; /* Allow the main content to grow and take available space */
+        }
+        #sidebar {
+            width: 20%;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #sidebar ul {
+            padding: 0;
+            margin: 0;
+        }
+        #sidebar>ul{
+            list-style-type: none;
+            text-align: center;
+        }
+        #sidebar>ul>li{
+            margin-bottom: 16px;
+        }
+        #content-area{
+            width: 80%;
+            padding: 20px;
+            background-color: #fff;
+            overflow-y: auto; /* Allows scrolling if content overflows */
+            height: calc(100vh - 200px); /* Adjust height to fit the viewport */
+        }
+        #item-lists {
+            width: 80%;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping to the next row */
+            gap: 20px; /* Adds spacing between items */
+        }
+        .item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            flex: 1 1 calc(20% - 20px); /* Ensures 5 items per row */
+            box-sizing: border-box;
+        }
+        .item img {
+            width: 100%; /* Makes the image responsive */
+            height: auto; /* Maintains aspect ratio */
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        #footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <a href="index.php" class="logo">Timepiece</a>
-                <ul class="nav-links">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="products.php">Shop</a></li>
-                    <li><a href="#">Collections</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="cart.php"><i class="fas fa-shopping-cart"></i> Cart</a></li>
-                    <li class="dropdown"> <!-- hiển thị tên người dùng sau khi đăng nhập -->
-                        <a href="#" class="dropbtn">
-                            <i class="fas fa-user"></i> 
-                            <?php echo $isLoggedIn ? $tenNguoiDung : "Account"; ?>
-                        </a>
-                        <div class="dropdown-content">
-                            <?php if (!$isLoggedIn): ?>
-                                <a href="#" onclick="showModal('loginModal')">Login</a>
-                                <a href="#" onclick="showModal('registerModal')">Register</a>
-                            <?php else: ?>
-                                <a href="./includes/logout.php">Logout</a>
-                            <?php endif; ?>
-                        </div>
-                    </li> <!--   tới đây -->
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Timeless Elegance</h1>
-                <p>Discover our exquisite collection of luxury watches</p>
-                <a href="products.php" class="btn">Shop Now</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="products">
-        <div class="container">
-            <h2 class="section-title">Featured Watches</h2>
-            <div class="product-grid">
-                <!-- Product 1 -->
-                <div class="product-card" data-product-id="1">
-                    <img src="public/images/casio3.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng hồ Casio MTP-1374L-1AVDF 6 Kim</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="1">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <!-- Product 2 -->
-                <div class="product-card" data-product-id="2">
-                    <img src="public/images/casio2.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Mtp Nam MTP-1374L-7AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="2">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <!-- Product 3 -->
-                <div class="product-card" data-product-id="3">
-                    <img src="public/images/casio1.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Nam MTP-1374L-9AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="3">Add to Cart</button>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="product-card" data-product-id="3">
-                    <img src="public/images/casio0.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Nam MTP-1374L-9AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="3">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <ul class="footer-links">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Shipping Policy</a></li>
-                <li><a href="#">Returns</a></li>
+    <div id="main-content">
+        <div id="sidebar">
+            <h2>Categories</h2>
+            <ul>
+                <li><button id="home">Home page</button></li>
+                <li><button id="prod-lists">Product listing</button></li>
+                <li><button id="users-lists">Users database</button></li>
+                <li><button id="status">Shipping status</button></li>
+                <li><button id="statistic">Statistic</button></li>
             </ul>
-            <p class="copyright">© 2023 Timepiece. All rights reserved.</p>
+            <h2>Filters</h2>
         </div>
-    </footer>
-        <!-- Modal đăng nhập -->
-    <div id="loginModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
-            <iframe src="includes/login.php" frameborder="0" style="width:100%; height:100%;"></iframe>
+        <div id="content-area">
+            <?php
+                $page = $_GET['page'] ?? 'main';
+                if ($page === 'productlist') {
+                    include 'productlist.php';
+                } 
+                elseif ($page === 'userlists') {
+                    include 'userlists.php';
+                }
+                elseif($page === 'shippingstatus'){
+                    include 'shippingstatus.php';
+                }    
+                elseif($page === 'statistic'){
+                    include 'statistic.php';
+                }    
+                elseif ($page === 'details') {
+                    if (isset($_GET['id'])) {
+                        include 'proddetails.php'; // Include proddetails.php and pass the id parameter
+                    } else {
+                        die("Product ID not provided.");
+                    }
+                }  
+                else {
+                    include 'homepage.php'; // Renamed from main-content.php
+                }
+            ?>  
         </div>
     </div>
-
-    <!-- Modal đăng ký -->
-    <div id="registerModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
-            <iframe src="includes/register.php" frameborder="0" style="width:100%; height:100%;"></iframe>
-        </div>
+    <div id="footer">
+        <p>&copy; 2023 Your Company. All rights reserved.</p>
+        <p>Privacy Policy | Terms of Service</p>
+        <p>Follow us on: 
+            <a href="#">Facebook</a> | 
+            <a href="#">Twitter</a> | 
+            <a href="#">Instagram</a>
+        </p>    
     </div>
-    <script src="public/js/main.js"></script>
-    <script> // script cho phần thông báo, xin chào, chuyển đổi giữa đăng nhập đăng ký
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-
-            if (urlParams.get("success") === "1") {
-                alert("Đăng nhập thành công. Xin chào <?php echo $tenNguoiDung; ?> !");
-            }
-            if (urlParams.get("logout") === "success") {
-                alert("Đăng xuất thành công!");
-            }
-        };
-        function showModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-    </script>
+    <script src="../button.js"></script>
 </body>
 </html>
