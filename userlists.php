@@ -1,13 +1,24 @@
 <?php
     include 'databases/db_connection.php';
-    $sql = "SELECT * FROM khachhang";
+
+    // Pagination logic
+    $limit = 20;
+    $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1; // Ensure $page is at least 1
+    $offset = ($page - 1) * $limit;
+
+    $sql = "SELECT * FROM khachhang LIMIT $limit OFFSET $offset";
     $result = $conn->query($sql);
-    $products = [];
+    $users = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $products[] = $row;
+            $users[] = $row;
         }
     }
+
+    // Get total user count
+    $countResult = $conn->query("SELECT COUNT(*) as total FROM khachhang");
+    $totalUsers = $countResult->fetch_assoc()['total'];
+    $totalPages = ceil($totalUsers / $limit);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,6 +108,7 @@
             background-color: #f1f1f1;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div id="userlist">
@@ -124,7 +136,7 @@
             </form>
         </div>
     </div>    
-    <table>
+    <table id="user-table">
         <tr>
             <th>User ID</th>
             <th>Username</th>
@@ -136,28 +148,50 @@
             <th>Last update</th>
             <th>Action</th>
         </tr>
-        <?php foreach ($products as $product): ?>
+        <?php foreach ($users as $user): ?>
             <tr>
-                <td><?php echo htmlspecialchars($product['MaKH']); ?></td>
-                <td><?php echo htmlspecialchars($product['HoTen']); ?></td>
-                <td><?php echo htmlspecialchars($product['Email']); ?></td>
-                <td><?php echo htmlspecialchars($product['MatKhau']); ?></td>
-                <td><?php echo htmlspecialchars($product['SoDienThoai']); ?></td>
-                <td><?php echo htmlspecialchars($product['DiaChi']); ?></td>
-                <td><?php echo htmlspecialchars($product['NgayTao']); ?></td>
-                <td><?php echo htmlspecialchars($product['NgayCapNhat']); ?></td>
+                <td><?php echo htmlspecialchars($user['MaKH']); ?></td>
+                <td><?php echo htmlspecialchars($user['HoTen']); ?></td>
+                <td><?php echo htmlspecialchars($user['Email']); ?></td>
+                <td><?php echo htmlspecialchars($user['MatKhau']); ?></td>
+                <td><?php echo htmlspecialchars($user['SoDienThoai']); ?></td>
+                <td><?php echo htmlspecialchars($user['DiaChi']); ?></td>
+                <td><?php echo htmlspecialchars($user['NgayTao']); ?></td>
+                <td><?php echo htmlspecialchars($user['NgayCapNhat']); ?></td>
                 <td><button>Edit</button> <button>Lock user</button></td>
             </tr>
         <?php endforeach; ?>
     </table>
+    <div id="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <button class="pagination-btn" data-page="<?php echo $i; ?>"><?php echo $i; ?></button>
+        <?php endfor; ?>
+    </div>
     <script>
+        $(document).ready(function() {
+            $('.pagination-btn').on('click', function() {
+                const page = $(this).data('page');
+                $.ajax({
+                    url: 'userlists.php',
+                    type: 'GET',
+                    data: { page: page },
+                    success: function(response) {
+                        const html = $(response).find('#user-table').html();
+                        $('#user-table').html(html);
+
+                        const paginationHtml = $(response).find('#pagination').html();
+                        $('#pagination').html(paginationHtml);
+                    }
+                });
+            });
+        });
+
         document.getElementById('add-user').addEventListener('click', function() {
             document.getElementById('overlay-content').style.display = 'block';
         });
         document.getElementById('close-overlay').addEventListener('click', function() {
             document.getElementById('overlay-content').style.display = 'none';
         });
-        
     </script>
 </body>
 </html>
