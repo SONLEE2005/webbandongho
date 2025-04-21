@@ -5,47 +5,43 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die('Invalid product ID');
 }
 
-$db = new Database();
-$product_id = intval($_GET['id']);
+try {
+    $db = new Database();
+    $product_id = intval($_GET['id']);
 
-// Get product reviews
-$reviews = $db->query(
-    "SELECT r.*, u.username, u.avatar 
-    FROM product_reviews r
-    JOIN users u ON r.user_id = u.id
-    WHERE r.product_id = ?
-    ORDER BY r.created_at DESC",
-    [$product_id]
-);
+    // Check if product_reviews table exists
+    $tableExists = $db->query("SHOW TABLES LIKE 'product_reviews'");
+    
+    if (!empty($tableExists)) {
+        // Get product reviews with user info if table exists
+        $reviews = $db->query("
+            SELECT r.*, u.HoTen 
+            FROM product_reviews r
+            JOIN KhachHang u ON r.MaKH = u.MaKH
+            WHERE r.MaSP = ?
+            ORDER BY r.NgayTao DESC
+        ", [$product_id]);
+    }
 
-if (!empty($reviews)):
-    foreach ($reviews as $review):
-        $stars = str_repeat('★', $review['rating']) . str_repeat('☆', 5 - $review['rating']);
-?>
-        <div class="review-card">
-            <div class="review-header">
-                <div class="user-info">
-                    <img src="<?= !empty($review['avatar']) ? $review['avatar'] : 'images/default-avatar.jpg' ?>" 
-                         alt="<?= htmlspecialchars($review['username']) ?>" 
-                         class="user-avatar">
-                    <span class="username"><?= htmlspecialchars($review['username']) ?></span>
-                </div>
-                <div class="review-meta">
-                    <div class="rating"><?= $stars ?></div>
-                    <div class="date"><?= date('M j, Y', strtotime($review['created_at'])) ?></div>
-                </div>
-            </div>
-            <div class="review-content">
-                <h3><?= htmlspecialchars($review['title']) ?></h3>
-                <p><?= nl2br(htmlspecialchars($review['content'])) ?></p>
-            </div>
-        </div>
-<?php
-    endforeach;
-else:
-    echo '<div class="no-reviews">';
-    echo '<i class="far fa-comment-dots"></i>';
-    echo '<p>No reviews yet. Be the first to review this product!</p>';
-    echo '</div>';
-endif;
-?>
+    if (!empty($reviews)) {
+        foreach ($reviews as $review) {
+            echo '<div class="review">';
+            echo '<div class="review-header">';
+            echo '<span class="review-author">' . htmlspecialchars($review['HoTen']) . '</span>';
+            echo '<span class="review-date">' . date('d/m/Y', strtotime($review['NgayTao'])) . '</span>';
+            echo '</div>';
+            echo '<div class="review-rating">';
+            for ($i = 0; $i < 5; $i++) {
+                echo $i < $review['Rating'] ? '★' : '☆';
+            }
+            echo '</div>';
+            echo '<div class="review-content">' . nl2br(htmlspecialchars($review['NoiDung'])) . '</div>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p>Chưa có đánh giá nào cho sản phẩm này.</p>';
+    }
+} catch (Exception $e) {
+    // Silently fail and show no reviews if there's an error
+    echo '<p>Chưa có đánh giá nào cho sản phẩm này.</p>';
+}
