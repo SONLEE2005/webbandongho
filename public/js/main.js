@@ -10,14 +10,52 @@ document.addEventListener('DOMContentLoaded', function() {
     navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
   });
 
-  // Product carousel functionality
-  const productCards = document.querySelectorAll('.product-card');
-  productCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const productId = this.getAttribute('data-product-id');
-      window.location.href = `product-detail.php?id=${productId}`;
+  // Product click functionality - moved to bottom of DOMContentLoaded
+  function setupProductCardClicks() {
+    const productCards = document.querySelectorAll('.product-card');
+    console.log('Found product cards:', productCards.length); // Debug log
+    
+    productCards.forEach(card => {
+      // Remove any existing click handlers to avoid duplicates
+      card.removeEventListener('click', handleProductCardClick);
+      // Add new click handler
+      card.addEventListener('click', handleProductCardClick);
+    });
+  }
+
+  function handleProductCardClick(e) {
+    console.log('Product card clicked - event:', e); // Detailed debug
+    console.log('Clicked element:', this); // Log the clicked element
+    const productId = this.getAttribute('data-product-id');
+    if (!productId) {
+      console.error('No product ID found on card:', this);
+      return;
+    }
+    console.log('Redirecting to product ID:', productId);
+    console.log('Full URL:', `product-detail.php?id=${productId}`);
+    window.location.href = `product-detail.php?id=${productId}`;
+  }
+
+  // Initial setup with a slight delay
+  setTimeout(setupProductCardClicks, 100); // Delay to ensure DOM is fully loaded
+
+  // MutationObserver to detect dynamically added product cards
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length) {
+        setupProductCardClicks();
+      }
     });
   });
+
+  // Start observing the product grid container
+  const productGrid = document.querySelector('.product-grid');
+  if (productGrid) {
+    observer.observe(productGrid, {
+      childList: true,
+      subtree: true
+    });
+  }
 
   // Cart functionality
   const addToCartButtons = document.querySelectorAll('.add-to-cart');
