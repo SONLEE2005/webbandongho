@@ -25,7 +25,7 @@ $related_products = $db->query(
 
 if (!empty($related_products)):
     foreach ($related_products as $product):
-        $image_url = !empty($product['HinhAnh']) ? $product['HinhAnh'] : 'images/default-watch.jpg';
+        $image_url = !empty($product['HinhAnh']) ? 'public/images/' . $product['HinhAnh'] : 'public/images/default-watch.jpg';
 ?>
         <div class="product-card">
                 <a href="product-detail.php?id=<?= $product['MaSP'] ?>">
