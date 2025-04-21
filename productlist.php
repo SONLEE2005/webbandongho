@@ -1,6 +1,12 @@
 <?php
     include 'databases/db_connection.php';
-    $sql = "SELECT * FROM sanpham";
+
+    // Pagination logic
+    $limit = 20;
+    $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1; // Ensure $page is at least 1
+    $offset = ($page - 1) * $limit;
+
+    $sql = "SELECT * FROM sanpham LIMIT $limit OFFSET $offset";
     $result = $conn->query($sql);
     $products = [];
     if ($result->num_rows > 0) {
@@ -8,6 +14,11 @@
             $products[] = $row;
         }
     }
+
+    // Get total product count
+    $countResult = $conn->query("SELECT COUNT(*) as total FROM sanpham");
+    $totalProducts = $countResult->fetch_assoc()['total'];
+    $totalPages = ceil($totalProducts / $limit);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -132,6 +143,7 @@
             font-size: 0.9em; /* Smaller font size */
         }
 </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div id="overlay" style="display: none; display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:10; padding-top: 60px;">
@@ -167,7 +179,7 @@
         <h1>Product List</h1>
         <button id="add-product">Add Product</button>
     </div>
-    <table>
+    <table id="product-table">
         <tr>
             <td>Product ID</td>
             <td>Product Name</td>
@@ -194,14 +206,37 @@
             <td><?php echo htmlspecialchars($product['NgayTao']); ?></td>
             <td><?php echo htmlspecialchars($product['NgayCapNhat']); ?></td>
             <td>
-                <button class="details">Details</button>
+                <button id="details">Details</button>
                 <button class="edit">Edit</button>
                 <button class="delete">Delete</button>
             </td>
         </tr>
         <?php endforeach; ?>
     </table>
+    <div id="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <button class="pagination-btn" data-page="<?php echo $i; ?>"><?php echo $i; ?></button>
+        <?php endfor; ?>
+    </div>
     <script>
+        $(document).ready(function() {
+            $('.pagination-btn').on('click', function() {
+                const page = $(this).data('page');
+                $.ajax({
+                    url: 'productlist.php',
+                    type: 'GET',
+                    data: { page: page },
+                    success: function(response) {
+                        const html = $(response).find('#product-table').html();
+                        $('#product-table').html(html);
+
+                        const paginationHtml = $(response).find('#pagination').html();
+                        $('#pagination').html(paginationHtml);
+                    }
+                });
+            });
+        });
+
         document.getElementById('add-product').addEventListener('click', function() {
             document.getElementById('overlay').style.display = 'block';
         });
