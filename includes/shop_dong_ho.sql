@@ -34,6 +34,7 @@ CREATE TABLE `admin` (
   `HoTen` varchar(100) DEFAULT NULL,
   `Email` varchar(100) DEFAULT NULL,
   `VaiTro` varchar(50) DEFAULT 'Admin',
+  `DaKhoa` TINYINT(1) DEFAULT 0,
   `NgayTao` datetime DEFAULT current_timestamp(),
   `NgayCapNhat` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -139,7 +140,9 @@ CREATE TABLE `khachhang` (
   `MatKhau` varchar(255) DEFAULT NULL,
   `SoDienThoai` varchar(15) DEFAULT NULL,
   `DiaChi` text DEFAULT NULL,
-  `NgayTao` datetime DEFAULT current_timestamp()
+  `DaKhoa` TINYINT(1) DEFAULT 0,
+  `NgayTao` datetime DEFAULT current_timestamp(),
+  `NgayCapNhat` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
