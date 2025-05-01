@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Timepiece</title>
     <link rel="stylesheet" href="public/css/style.css">
-    <link rel="stylesheet" href="public/css/cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+<?php
+session_start();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product_id'])) {
+    $delete_id = $_POST['delete_product_id'];
+    if (isset($_SESSION['cart'][$delete_id])) {
+        unset($_SESSION['cart'][$delete_id]);
+    }
+    header("Location: cart.php");
+    exit();
+}
+?>
     <header>
         <div class="container">
             <nav class="navbar">
