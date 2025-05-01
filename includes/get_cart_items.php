@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'database.php';
 
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
@@ -36,6 +35,10 @@ foreach ($cart as $product_id => $quantity) {
     echo '      <p>Price: $' . number_format($price, 2) . '</p>';
     echo '      <p>Quantity: ' . intval($quantity) . '</p>';
     echo '      <p>Total: $' . number_format($total_price, 2) . '</p>';
+    echo '      <form method="POST" action="cart.php" class="delete-form">';
+    echo '          <input type="hidden" name="delete_product_id" value="' . htmlspecialchars($product_id) . '">';
+    echo '          <button type="submit" class="btn btn-delete" title="Remove item"><i class="fas fa-trash-alt"></i> Delete</button>';
+    echo '      </form>';
     echo '  </div>';
     echo '</div>';
 }
