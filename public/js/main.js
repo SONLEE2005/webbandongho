@@ -72,4 +72,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(`Added product ${productId} to cart`);
     alert('Product added to cart!');
   }
+
+  // Hero ads image rotation
+  const heroAdImages = [
+    "public/images/ads2.jpg",
+    "public/images/ads3.jpg",
+    
+  ];
+
+  let currentHeroAdIndex = 0;
+  const heroAdImageElement = document.getElementById('heroAdImage');
+
+  if (heroAdImageElement) {
+    setInterval(() => {
+      currentHeroAdIndex = (currentHeroAdIndex + 1) % heroAdImages.length;
+      heroAdImageElement.src = heroAdImages[currentHeroAdIndex];
+    }, 5000);
+  }
 });
