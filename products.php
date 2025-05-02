@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    $tenNguoiDung = isset($_SESSION["hoTen"]) ? htmlspecialchars($_SESSION["hoTen"]) : null;
+    $isLoggedIn = isset($_SESSION["email"]);
+?> <!-- Thêm khúc này để lấy tên người dùng, email bắt đầu phiên làm việc-->
 <!DOCTYPE html>
 <html lang="vi">
 <head>  
@@ -6,6 +11,39 @@
     <title>Our Collection | Timepiece</title>
     <link rel="stylesheet" href="public/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style> /* style cho phần menu tài khoản */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            cursor: pointer;
+            padding: 10px;
+            text-decoration: none;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 4px;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }        
+    </style>
 </head>
 <body>
     <header>
@@ -21,6 +59,15 @@
                     <li>
                         <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." style="padding:5px; border-radius:4px; border:1px solid #ccc; margin-left:10px;">
                     </li>
+                    <li class="dropdown"> <!-- hiển thị tên người dùng sau khi đăng nhập -->
+                        <a href="#" class="dropbtn">
+                            <i class="fas fa-user"></i> 
+                            <?php echo  $tenNguoiDung  ?>
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="./includes/logout.php" style="color: black">Logout</a>  
+                        </div>
+                    </li> <!--   tới đây -->
                 </ul>
             </nav>
         </div>
