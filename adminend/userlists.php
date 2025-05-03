@@ -14,7 +14,7 @@
     // Modify SQL query to include search and filters
     $sql = "SELECT * FROM khachhang WHERE 1=1";
     if ($query) {
-        $sql .= " AND HoTen LIKE '%" . $conn->real_escape_string($query) . "%'";
+        $sql .= " AND (HoTen LIKE '%" . $conn->real_escape_string($query) . "%' OR Email LIKE '%" . $conn->real_escape_string($query) . "%')";
     }
     if ($province) {
         $sql .= " AND DiaChi LIKE '%" . $conn->real_escape_string($province) . "%'";
@@ -71,20 +71,82 @@
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        #overlay-content{
-            display: none; /* Initially hidden */
-            position: fixed; /* Fixed position to cover the entire screen */
+        #overlay-content {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            z-index: 10; /* Ensure it appears above other content */
-            padding-top: 60px; /* Space for the close button */
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
-        #overlay-content>div>div{
+        #overlay-content > div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the form */
+            background-color: #fff;
+            padding: 30px; /* Increase padding for a larger form */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            width: 95%; /* Increase width for a larger form */
+            max-width: 600px; /* Adjust max width */
+            text-align: center; /* Center-align content */
+        }
+        #overlay-content > div > div {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+        #overlay-content h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333;
+        }
+        #overlay-content label {
+            display: inline-block; /* Display label inline */
+            width: 150px; /* Fixed width for alignment */
+            margin-right: 10px; /* Add spacing between label and input */
+            font-weight: bold;
+            color: #555;
+            text-align: right; /* Align text to the right */
+        }
+        #overlay-content input[type="text"],
+        #overlay-content input[type="email"],
+        #overlay-content input[type="password"] {
+            display: inline-block; /* Keep input inline with label */
+            width: calc(100% - 180px); /* Adjust width to fit next to label */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #overlay-content input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #overlay-content input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        #overlay-content button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #overlay-content button:hover {
+            background-color: darkred;
         }
         th, td {
             padding: 10px;
@@ -222,6 +284,182 @@
             color: white;
             font-weight: bold;
         }
+        #add-user {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #add-user:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #add-user:active {
+            background-color: #3e8e41;
+            transform: scale(1);
+        }
+        #edit-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        #edit-overlay > div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the form */
+            background-color: #fff;
+            padding: 30px; /* Increase padding for a larger form */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            width: 95%; /* Increase width for a larger form */
+            max-width: 600px; /* Adjust max width */
+            text-align: center; /* Center-align content */
+        }
+        #edit-overlay>div>div{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #edit-overlay h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333;
+        }
+        #edit-overlay label {
+            display: inline-block; /* Display label inline */
+            margin-right: 10px; /* Add spacing between label and input */
+            font-weight: bold;
+            color: #555;
+        }
+        #edit-overlay input[type="text"],
+        #edit-overlay input[type="email"] {
+            display: inline-block; /* Keep input inline with label */
+            width: calc(100% - 150px); /* Adjust width to fit larger form */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #edit-overlay input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #edit-overlay input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        #edit-overlay button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #edit-overlay button:hover {
+            background-color: darkred;
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+        .lock-btn, .unlock-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .lock-btn:hover, .unlock-btn:hover {
+            background-color: darkred;
+        }
+        @media (max-width: 768px) {
+            #userlist {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            #table-wrapper {
+                overflow-x: auto; /* Enable horizontal scrolling */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile devices */
+            }
+            table {
+                font-size: 0.9em;
+                min-width: 900px; /* Ensure table doesn't shrink too much */
+            }
+            th, td {
+                padding: 5px;
+            }
+            #pagination button {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+            #add-user {
+                width: auto;
+                max-width: 200px;
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+            form {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            form input, form select, form button {
+                width: auto;
+                max-width: 200px;
+                font-size: 0.9em;
+                padding: 4px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                font-size: 0.8em;
+            }
+            table {
+                font-size: 0.8em;
+            }
+            form input, form select, form button {
+                font-size: 0.8em;
+                padding: 3px;
+            }
+            #pagination button {
+                font-size: 0.8em;
+                padding: 6px 8px;
+            }
+            #add-user {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -249,45 +487,44 @@
             <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Apply</button>
             <button type="button" id="reset-filters" style="padding: 5px 10px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer;">Reset</button>
         </form>
-        <button id="filter-users">Filter</button>
         <button id="add-user">Add User</button>
     </div>
     <div id="overlay-content" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:10; padding-top: 60px;">
-        <div style="background-color:#fff; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 95%; max-width: 600px; text-align: center;">
             <div>
                 <h2>Add User</h2>
                 <button onclick="document.getElementById('overlay-content').style.display='none'">Close</button>
             </div>
             <form action="adduser.php" method="post">
-                <label for="username">Username:</label><br>
+                <label for="username">Username:</label>
                 <input type="text" id="username" name="username"><br><br>
-                <label for="email">Email:</label><br>
+                <label for="email">Email:</label>
                 <input type="email" id="email" name="email"><br><br>
-                <label for="password">Password:</label><br>
+                <label for="password">Password:</label>
                 <input type="password" id="password" name="password"><br><br>
-                <label for="phonenumber">Phone number:</label><br>
+                <label for="phonenumber">Phone number:</label>
                 <input type="text" id="phonenumber" name="phonenumber"><br><br>
-                <label for="address">Address:</label><br>
+                <label for="address">Address:</label>
                 <input type="text" id="address" name="address"><br><br>
                 <input type="submit" value="Submit">
             </form>
         </div>
     </div>    
     <div id="edit-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:10; padding-top: 60px;">
-        <div style="background-color:#fff; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 95%; max-width: 600px; text-align: center;">
             <div>
                 <h2>Edit User</h2>
                 <button onclick="document.getElementById('edit-overlay').style.display='none'">Close</button>
             </div>
             <form id="edit-user-form" action="edituser.php" method="post">
                 <input type="hidden" id="edit-user-id" name="user_id">
-                <label for="edit-username">Username:</label><br>
+                <label for="edit-username">Username:</label>
                 <input type="text" id="edit-username" name="username"><br><br>
-                <label for="edit-email">Email:</label><br>
+                <label for="edit-email">Email:</label>
                 <input type="email" id="edit-email" name="email"><br><br>
-                <label for="edit-phonenumber">Phone number:</label><br>
+                <label for="edit-phonenumber">Phone number:</label>
                 <input type="text" id="edit-phonenumber" name="phonenumber"><br><br>
-                <label for="edit-address">Address:</label><br>
+                <label for="edit-address">Address:</label>
                 <input type="text" id="edit-address" name="address"><br><br>
                 <input type="submit" value="Save Changes">
             </form>
@@ -318,45 +555,47 @@
             </form>
         </div>
     </div>
-    <table id="user-table">
-        <tr>
-            <th>User ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Password</th>
-            <th>Phone number</th>
-            <th>Address</th>
-            <th>Locked</th> <!-- Display DaKhoa column -->
-            <th>Creation date</th>
-            <th>Last update</th>
-            <th>Action</th>
-        </tr>
-        <?php foreach ($users as $user): ?>
+    <div id="table-wrapper">
+        <table id="user-table">
             <tr>
-                <td><?php echo htmlspecialchars($user['MaKH']); ?></td>
-                <td><?php echo htmlspecialchars($user['HoTen']); ?></td>
-                <td><?php echo htmlspecialchars($user['Email']); ?></td>
-                <td><?php echo htmlspecialchars($user['MatKhau']); ?></td>
-                <td><?php echo htmlspecialchars($user['SoDienThoai']); ?></td>
-                <td><?php echo htmlspecialchars($user['DiaChi']); ?></td>
-                <td><?php echo $user['DaKhoa'] ? 'Yes' : 'No'; ?></td> <!-- Display lock status -->
-                <td><?php echo htmlspecialchars($user['NgayTao']); ?></td>
-                <td><?php echo htmlspecialchars($user['NgayCapNhat']); ?></td>
-                <td>
-                    <button class="edit-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>" 
-                            data-username="<?php echo htmlspecialchars($user['HoTen']); ?>" 
-                            data-email="<?php echo htmlspecialchars($user['Email']); ?>" 
-                            data-phonenumber="<?php echo htmlspecialchars($user['SoDienThoai']); ?>" 
-                            data-address="<?php echo htmlspecialchars($user['DiaChi']); ?>">Edit</button>
-                    <?php if ($user['DaKhoa']): ?>
-                        <button class="unlock-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>">Unlock</button>
-                    <?php else: ?>
-                        <button class="lock-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>">Lock</button>
-                    <?php endif; ?>
-                </td>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Phone number</th>
+                <th>Address</th>
+                <th>Locked</th> <!-- Display DaKhoa column -->
+                <th>Creation date</th>
+                <th>Last update</th>
+                <th>Action</th>
             </tr>
-        <?php endforeach; ?>
-    </table>
+            <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($user['MaKH']); ?></td>
+                    <td><?php echo htmlspecialchars($user['HoTen']); ?></td>
+                    <td><?php echo htmlspecialchars($user['Email']); ?></td>
+                    <td><?php echo htmlspecialchars($user['MatKhau']); ?></td>
+                    <td><?php echo htmlspecialchars($user['SoDienThoai']); ?></td>
+                    <td><?php echo htmlspecialchars($user['DiaChi']); ?></td>
+                    <td><?php echo $user['DaKhoa'] ? 'Yes' : 'No'; ?></td> <!-- Display lock status -->
+                    <td><?php echo htmlspecialchars($user['NgayTao']); ?></td>
+                    <td><?php echo htmlspecialchars($user['NgayCapNhat']); ?></td>
+                    <td>
+                        <button class="edit-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>" 
+                                data-username="<?php echo htmlspecialchars($user['HoTen']); ?>" 
+                                data-email="<?php echo htmlspecialchars($user['Email']); ?>" 
+                                data-phonenumber="<?php echo htmlspecialchars($user['SoDienThoai']); ?>" 
+                                data-address="<?php echo htmlspecialchars($user['DiaChi']); ?>">Edit</button>
+                        <?php if ($user['DaKhoa']): ?>
+                            <button class="unlock-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>">Unlock</button>
+                        <?php else: ?>
+                            <button class="lock-btn" data-id="<?php echo htmlspecialchars($user['MaKH']); ?>">Lock</button>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
 
     <!-- Pagination controls -->
     <div id="pagination" style="text-align: center; margin: 20px 0;">
