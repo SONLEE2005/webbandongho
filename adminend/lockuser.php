@@ -1,6 +1,6 @@
 <?php
 include 'databases/db_connection.php';
-
+?>
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
     $action = isset($_POST['action']) ? $_POST['action'] : '';

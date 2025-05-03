@@ -20,8 +20,9 @@
                 </ul>
                 <ul>
                     <li><button id="profile">Pfp</button></li>
-                    <li><button id="login">Login</button></li>
-                    <li><button id="signup">Sign up</button></li>
+                    <!-- <li><button id="login">Login</button></li> -->
+                    <!-- <li><button id="signup">Sign up</button></li> -->
+                     <li><button id="logout">Logout</button></li>
                     <li><button id="cart">Cart</button></li>
                 </ul>
             </nav>
