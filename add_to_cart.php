@@ -3,9 +3,11 @@ session_start();
 
 // Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['maKH'])) {
-    header("Location: ../includes/login.php");
+    $maSP = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+    header("Location: http://localhost/webbandongho-main/product-detail.php?id=$maSP&error=chuaDangNhap");
     exit();
 }
+
 
 $servername = "localhost";
 $username = "root";
@@ -54,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["product_id"], $_POST["
     $conn->close();
 
     // Quay về trang trước hoặc chuyển hướng
-    header('Location: product-detail.php?id='.$maSP.'&success=1');
+    header('Location: http://localhost/webbandongho-main/product-detail.php?id='.$maSP.'&success=1');
     exit();
 } else {
     // Nếu dữ liệu không hợp lệ
