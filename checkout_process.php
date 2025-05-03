@@ -59,6 +59,13 @@ try {
 
     $conn->commit();
 
+    //Xoá sản phẩm đã thanh toán khỏi giỏ hàng
+    foreach ($_POST['products'] as $product) {
+        $maSP = intval($product['id']);
+        $sqlDelete = "DELETE FROM giohang WHERE MaKH = ? AND MaSP = ?";
+        $db->query($sqlDelete, [$maKH, $maSP]);
+    }
+
     header("Location: hoadon.php?maDH={$maDH}");
     exit;
 
