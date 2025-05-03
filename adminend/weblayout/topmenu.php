@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,26 +9,38 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="header">
-            <div>
-                <h1>Logo here*</h1>
-                <h1>Welcome to the Admin End</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="">Home</a></li>
-                    <li><a href="">About</a></li>
-                    <li><a href="">Services</a></li>
-                    <li><a href="">Contact</a></li>
-                </ul>
-                <ul>
-                    <li><button id="profile">Pfp</button></li>
-                    <li><button id="login">Login</button></li>
-                    <li><button id="signup">Sign up</button></li>
-                    <li><button id="cart">Cart</button></li>
-                </ul>
-            </nav>
+    <div id="topmenu">
+        <ul>
+            <li>Search: </li>
+            <li>
+                <form action="search.php" method="GET">
+                    <input type="text" name="query" id="searchQuery" placeholder="Enter search term">
+                    <button type="submit">Search</button>
+                </form>
+            </li>
+            <div>Sort by:</div>
+            <select name="" id="">
+                <option value="">Price</option>
+                <option value="">Name</option>
+                <option value="">Date</option>
+            </select>
+            <li>
+                <?php
+                if (isset($_SESSION['user_data']['HoTen'])) {
+                    echo "Welcome back, " . htmlspecialchars($_SESSION['user_data']['HoTen']);
+                } else {
+                    echo "Welcome back, Guest";
+                }
+                ?>
+            </li>
+            <button id="signout">Sign out</button>
+        </ul>
     </div>
-    <script src="../button.js"></script>
+    <script>
+        document.getElementById('signout').addEventListener('click', function() {
+            alert('Signing out...');
+            window.location.href = '../../loginpage/login.php'; // Redirect to logout page
+        });
+    </script>
 </body>
 </html>
