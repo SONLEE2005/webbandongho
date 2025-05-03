@@ -177,6 +177,21 @@
             box-shadow: 0 0 3px #555;
         }
     </style>
+    <style>
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+        }
+        .increase-btn, .decrease-btn {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <header>
