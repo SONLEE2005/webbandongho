@@ -37,7 +37,7 @@
     }
 
     // Get total user count
-    $countResult = $conn->query("SELECT COUNT(*) as total FROM khachhang WHERE 1=1");
+    $countResult = $conn->query("SELECT COUNT(*) as total FROM khachhang WHERE 1=1" . ($province ? " AND DiaChi LIKE '%" . $conn->real_escape_string($province) . "%'" : ""));
     $totalUsers = $countResult->fetch_assoc()['total'];
     $totalPages = ceil($totalUsers / $itemsPerPage);
 ?>
@@ -238,11 +238,13 @@
                 <option value="name_desc" <?php echo $sort === 'name_desc' ? 'selected' : ''; ?>>Name (Z-A)</option>
             </select>
             <select name="province" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                <option value="">Filter by Province</option>
-                <option value="Hanoi" <?php echo $province === 'Hanoi' ? 'selected' : ''; ?>>Hanoi</option>
-                <option value="Ho Chi Minh" <?php echo $province === 'Ho Chi Minh' ? 'selected' : ''; ?>>Ho Chi Minh</option>
-                <option value="Da Nang" <?php echo $province === 'Da Nang' ? 'selected' : ''; ?>>Da Nang</option>
-                <!-- Add more provinces as needed -->
+                <option value="">Lọc theo tỉnh</option>
+                <option value="Hà Nội" <?php echo $province === 'Hà Nội' ? 'selected' : ''; ?>>Hà Nội</option>
+                <option value="Hồ Chí Minh" <?php echo $province === 'Hồ Chí Minh' ? 'selected' : ''; ?>>Hồ Chí Minh</option>
+                <option value="Đà Nẵng" <?php echo $province === 'Đà Nẵng' ? 'selected' : ''; ?>>Đà Nẵng</option>
+                <option value="Cần Thơ" <?php echo $province === 'Cần Thơ' ? 'selected' : ''; ?>>Cần Thơ</option>
+                <option value="Hải Phòng" <?php echo $province === 'Hải Phòng' ? 'selected' : ''; ?>>Hải Phòng</option>
+                <!-- Add more Vietnamese provinces as needed -->
             </select>
             <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Apply</button>
             <button type="button" id="reset-filters" style="padding: 5px 10px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer;">Reset</button>
