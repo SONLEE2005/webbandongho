@@ -14,7 +14,7 @@ $offset = ($currentPage - 1) * $itemsPerPage;
 // Modify SQL query to include search and filters
 $sql = "SELECT * FROM admin WHERE 1=1";
 if ($query) {
-    $sql .= " AND HoTen LIKE '%" . $conn->real_escape_string($query) . "%'";
+    $sql .= " AND (HoTen LIKE '%" . $conn->real_escape_string($query) . "%' OR Email LIKE '%" . $conn->real_escape_string($query) . "%')";
 }
 if ($role) {
     $sql .= " AND VaiTro LIKE '%" . $conn->real_escape_string($role) . "%'";
@@ -100,6 +100,26 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
             color: white;
             font-weight: bold;
         }
+        #add-admin {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #add-admin:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #add-admin:active {
+            background-color: #3e8e41;
+            transform: scale(1);
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -128,27 +148,38 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
     <table id="admin-table">
         <tr>
             <th>Admin ID</th>
-            <th>Username</th>
+            <th>Username</th> <!-- Display TenDangNhap -->
+            <th>Full Name</th>
             <th>Email</th>
+            <th>Password</th> <!-- New Password column -->
             <th>Role</th>
-            <th>Creation date</th>
-            <th>Last update</th>
+            <th>Locked</th>
+            <th>Creation Date</th>
+            <th>Last Update</th>
             <th>Action</th>
         </tr>
         <?php foreach ($admins as $admin): ?>
             <tr>
                 <td><?php echo htmlspecialchars($admin['MaAdmin']); ?></td>
+                <td><?php echo htmlspecialchars($admin['TenDangNhap']); ?></td> <!-- Display username -->
                 <td><?php echo htmlspecialchars($admin['HoTen']); ?></td>
                 <td><?php echo htmlspecialchars($admin['Email']); ?></td>
+                <td><?php echo htmlspecialchars($admin['MatKhau']); ?></td> <!-- Display password -->
                 <td><?php echo htmlspecialchars($admin['VaiTro']); ?></td>
+                <td><?php echo $admin['DaKhoa'] ? 'Yes' : 'No'; ?></td>
                 <td><?php echo htmlspecialchars($admin['NgayTao']); ?></td>
                 <td><?php echo htmlspecialchars($admin['NgayCapNhat']); ?></td>
                 <td>
                     <button class="edit-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>" 
-                            data-username="<?php echo htmlspecialchars($admin['HoTen']); ?>" 
+                            data-username="<?php echo htmlspecialchars($admin['TenDangNhap']); ?>" 
+                            data-fullname="<?php echo htmlspecialchars($admin['HoTen']); ?>" 
                             data-email="<?php echo htmlspecialchars($admin['Email']); ?>" 
                             data-role="<?php echo htmlspecialchars($admin['VaiTro']); ?>">Edit</button>
-                    <button class="lock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Lock admin</button>
+                    <?php if ($admin['DaKhoa']): ?>
+                        <button class="unlock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Unlock</button>
+                    <?php else: ?>
+                        <button class="lock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Lock</button>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -235,16 +266,22 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
             });
 
             $('.lock-btn').on('click', function() {
+                const adminId = $(this).data('id');
                 if (confirm('Are you sure you want to lock this admin?')) {
-                    $('#overlay-title').text('Lock Admin');
-                    $('#form-action').val('lock');
-                    $('#admin-id').val($(this).data('id'));
-                    $('#admin-username').val('');
-                    $('#admin-password').val('');
-                    $('#admin-fullname').val('');
-                    $('#admin-email').val('');
-                    $('#admin-role').val('');
-                    $('#overlay').fadeIn();
+                    $.post('lockadmin.php', { admin_id: adminId, action: 'lock' }, function(response) {
+                        alert(response);
+                        location.reload();
+                    });
+                }
+            });
+
+            $('.unlock-btn').on('click', function() {
+                const adminId = $(this).data('id');
+                if (confirm('Are you sure you want to unlock this admin?')) {
+                    $.post('lockadmin.php', { admin_id: adminId, action: 'unlock' }, function(response) {
+                        alert(response);
+                        location.reload();
+                    });
                 }
             });
 
