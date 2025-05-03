@@ -482,7 +482,7 @@
                                 <button type="button" class="small-btn" id="showDiscountBtn" onclick="showDiscountInput()">Nhập mã giảm giá</button>
 
                                 <div id="discountCodeSection" style="display: none; margin-top: 10px;">
-                                    <input type="text" id="discountCodeInput" placeholder="Nhập mã giảm giá (TET2025 hoặc SUMMER25)">
+                                    <input type="text" id="discountCodeInput" placeholder="TET2025 hoặc SUMMER25">
                                     <button type="button" onclick="applyDiscountCode()">Áp dụng</button>
                                     <p id="discountMessage" style="color: green; font-weight: bold;"></p>
                                 </div>
