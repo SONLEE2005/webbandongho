@@ -453,15 +453,18 @@
                                             $<?= number_format($product['price'], 2, ',', '.') ?>
                                         </span>
                                     </div>
-                                    <div class="quantity-control">
-                                        <button type="button" onclick="decreaseQuantity(this)">-</button>
-                                        <input type="text" value="<?= $product['quantity'] ?>" readonly>
-                                        <button type="button" onclick="increaseQuantity(this)">+</button>
-                                    </div>
-                                    <span class="item-total">
-                                        $<?= number_format($product['price'] * $product['quantity'], 2, ',', '.') ?>
-                                    </span>
 
+                                    <div style="display:flex;flex-direction:column">
+                                        <!-- Hiển thị số lượng mà không có nút tăng giảm -->
+                                        <div class="quantity-display">
+                                            Số lượng: <?= $product['quantity'] ?>
+                                        </div>
+
+                                        <span class="item-total">
+                                            Số tiền: $<?= number_format($product['price'] * $product['quantity'], 2, ',', '.') ?>
+                                        </span>
+                                    </div>
+                                    
                                     <!-- Các input hidden để gửi qua POST -->
                                     <input type="hidden" name="products[<?= $index ?>][id]" value="<?= htmlspecialchars($product['id']) ?>">
                                     <input type="hidden" name="products[<?= $index ?>][name]" value="<?= htmlspecialchars($product['name']) ?>">
@@ -566,7 +569,7 @@
 
             closeEditModal();
         }
-        let discount = 0; // Không còn giảm giá ngẫu nhiên
+        let discount = 0; 
 
         function showDiscountInput() {
             document.getElementById("discountCodeSection").style.display = "block";
@@ -578,8 +581,9 @@
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
+
             document.querySelector('#discountInput').value = value.toFixed(2);
-            updateOrderTotal();
+            updateOrderTotal();  // Cập nhật lại tổng tiền sau khi giảm giá
         }
 
         function applyDiscountCode() {
@@ -588,7 +592,11 @@
             let subtotal = 0;
 
             document.querySelectorAll('.item-total').forEach(item => {
-                let itemText = item.innerText.replace('$', '').replace(/\./g, '').replace(',', '.');
+                let itemText = item.innerText
+                    .replace('Số tiền:', '')   // ✅ Bỏ chữ "Số tiền:"
+                    .replace('$', '')          // Bỏ $
+                    .replace(/\./g, '')        // Bỏ chấm
+                    .replace(',', '.');        // Đổi phẩy thành chấm
                 subtotal += parseFloat(itemText);
             });
 
@@ -609,38 +617,12 @@
             updateDiscountDisplay(discount);
         }
 
-    </script>
-    <script>
-        // Hàm làm tròn lên bội số của 1000
-        function roundToNearest(value, multiple) {
-            return Math.round(value / multiple) * multiple;
-        }
-
-        
-
+        // Hiển thị giá trị giảm giá ban đầu
         document.querySelector('.discount strong').innerText = '$' + discount.toLocaleString('vi-VN', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
         document.querySelector('#discountInput').value = discount.toFixed(2);
-
-        // Giảm số lượng sản phẩm
-        function decreaseQuantity(btn) {
-            let input = btn.nextElementSibling;
-            let quantity = parseInt(input.value);
-            if (quantity > 1) {
-                input.value = quantity - 1;
-                updateItemTotal(btn);
-            }
-        }
-
-        // Tăng số lượng sản phẩm
-        function increaseQuantity(btn) {
-            let input = btn.previousElementSibling;
-            let quantity = parseInt(input.value);
-            input.value = quantity + 1;
-            updateItemTotal(btn);
-        }
 
         // Cập nhật tổng tiền của từng sản phẩm
         function updateItemTotal(btn) {
@@ -660,7 +642,7 @@
                 maximumFractionDigits: 2
             });
 
-            updateOrderTotal();
+            updateOrderTotal(); // Cập nhật tổng khi thay đổi số lượng
         }
 
         // Cập nhật tổng tiền đơn hàng
@@ -670,21 +652,21 @@
 
             itemTotals.forEach(item => {
                 let itemText = item.innerText
-                    .replace('$', '')           // bỏ $
-                    .replace(/\./g, '')         // bỏ dấu chấm ngăn cách hàng nghìn
-                    .replace(',', '.');         // chuyển phẩy thành chấm
+                    .replace('Số tiền:', '')   // ✅ Bỏ chữ "Số tiền:"
+                    .replace('$', '')          // Bỏ dấu $
+                    .replace(/\./g, '')        // Bỏ dấu chấm ngăn cách nghìn
+                    .replace(',', '.');        // Đổi dấu phẩy thành chấm
                 subtotal += parseFloat(itemText);
             });
 
-            // Tính tổng
             let finalTotal = subtotal - discount;
             if (finalTotal < 0) finalTotal = 0;
 
-            // Hiển thị tổng cuối
             document.querySelector('.total strong').innerText = '$' + finalTotal.toLocaleString('vi-VN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
+
             document.querySelector('#orderTotal').value = finalTotal.toFixed(2);
         }
 
@@ -693,6 +675,5 @@
             updateOrderTotal();
         });
     </script>
-
 </body>
 </html>
