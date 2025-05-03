@@ -93,6 +93,11 @@
                     <li><a href="#">Collections</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="cart.php"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                    <li>
+                        <form id="search-form" style="margin:0;">
+                            <input type="text" id="search-input" name="search" placeholder="Tìm kiếm sản phẩm..." style="padding:5px; border-radius:4px; border:1px solid #ccc; margin-right:10px;">
+                        </form>
+                    </li>
                     <li class="dropdown"> <!-- hiển thị tên người dùng sau khi đăng nhập -->
                         <a href="#" class="dropbtn">
                             <i class="fas fa-user"></i> 
@@ -114,57 +119,49 @@
 
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Timeless Elegance</h1>
-                <p>Discover our exquisite collection of luxury watches</p>
-                <a href="products.php" class="btn">Shop Now</a>
+            <div class="hero-ads">
+                <img id="heroAdImage" src="public/images/ads.jpg" alt="Hero Ad" />
             </div>
         </div>
     </section>
+    <div class="hero-content container">
+        <h1>Timeless Elegance</h1>
+        <p>Discover our exquisite collection of luxury watches</p>
+        <a href="products.php" class="btn">Shop Now</a>
+    </div>
 
     <section class="products">
         <div class="container">
             <h2 class="section-title">Featured Watches</h2>
-            <div class="product-grid">
-                <!-- Product 1 -->
-                <div class="product-card" data-product-id="1">
-                    <img src="public/images/casio3.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng hồ Casio MTP-1374L-1AVDF 6 Kim</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="1">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <!-- Product 2 -->
-                <div class="product-card" data-product-id="2">
-                    <img src="public/images/casio2.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Mtp Nam MTP-1374L-7AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="2">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <!-- Product 3 -->
-                <div class="product-card" data-product-id="3">
-                    <img src="public/images/casio1.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Nam MTP-1374L-9AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="3">Add to Cart</button>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="product-card" data-product-id="3">
-                    <img src="public/images/casio0.jpg" alt="Luxury Watch" class="product-img">
-                    <div class="product-info">
-                        <h3 class="product-title">Đồng Hồ Casio Nam MTP-1374L-9AVDF</h3>
-                        <p class="product-price">1.589.000₫</p>
-                        <button class="btn add-to-cart" data-product-id="3">Add to Cart</button>
-                    </div>
-                </div>
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be loaded dynamically here -->
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const productGrid = document.getElementById('product-grid');
+
+                    function fetchProducts() {
+                        fetch('includes/get_products.php?limit=4')
+                            .then(response => response.text())
+                            .then(html => {
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = html;
+                                const newProductCards = tempDiv.querySelector('#product-cards');
+                                if (newProductCards) {
+                                    productGrid.innerHTML = newProductCards.innerHTML;
+                                } else {
+                                    productGrid.innerHTML = '<p>Không tìm thấy sản phẩm nào.</p>';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching products:', error);
+                                productGrid.innerHTML = '<p>Đã xảy ra lỗi khi tải sản phẩm.</p>';
+                            });
+                    }
+
+                    fetchProducts();
+                });
+            </script>
         </div>
     </section>
 
@@ -205,6 +202,16 @@
             if (urlParams.get("logout") === "success") {
                 alert("Đăng xuất thành công!");
             }
+
+            // Search form submit event to redirect to products.php with search query
+            const searchForm = document.getElementById('search-form');
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const query = document.getElementById('search-input').value.trim();
+                if (query !== '') {
+                    window.location.href = 'products.php?search=' + encodeURIComponent(query);
+                }
+            });
         };
         function showModal(id) {
             document.getElementById(id).style.display = 'flex';

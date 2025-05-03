@@ -1,25 +1,25 @@
 <?php
+header('Content-Type: application/json');
+
 $servername = "localhost";
-$username = "root";  
-$password = "";      
+$username = "root";
+$password = "";
 $dbname = "shop_dong_ho";
 
-// Kết nối database
 $conn = new mysqli($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
 if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
+    echo json_encode(["success" => false, "message" => "Kết nối thất bại: " . $conn->connect_error]);
+    exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $hoTen = $_POST["username"];
-    $diaChi = $_POST["diachi"];
-    $soDienThoai = $_POST["sdt"];
-    $eMail= $_POST["email"];
-    $matKhau = password_hash($_POST["password"], PASSWORD_DEFAULT); // Mã hóa mật khẩu
+    $hoTen = $_POST["username"] ?? '';
+    $diaChi = $_POST["diachi"] ?? '';
+    $soDienThoai = $_POST["sdt"] ?? '';
+    $eMail = $_POST["email"] ?? '';
+    $matKhau = password_hash($_POST["password"] ?? '', PASSWORD_DEFAULT);
 
-    // Kiểm tra xem tên đăng nhập đã tồn tại chưa
+    // Kiểm tra email đã tồn tại
     $checkSql = "SELECT Email FROM khachhang WHERE Email = ?";
     $stmt = $conn->prepare($checkSql);
     $stmt->bind_param("s", $eMail);
@@ -27,29 +27,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        // Nếu tên đăng nhập đã tồn tại, chuyển hướng về form đăng ký với thông báo lỗi
+        echo json_encode(["success" => false, "message" => "Email đã được đăng ký."]);
         $stmt->close();
         $conn->close();
-        header("Location: register.php?error=exists&email=" . urlencode($eMail) .
-           "&username=" . urlencode($hoTen) .
-           "&sdt=" . urlencode($soDienThoai) .
-           "&diachi=" . urlencode($diaChi));
-        exit();
+        exit;
     }
-
     $stmt->close();
 
+    // Thêm người dùng mới
     $sql = "INSERT INTO khachhang (HoTen, Email, MatKhau, SoDienThoai, DiaChi) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssss", $hoTen, $eMail, $matKhau, $soDienThoai, $diaChi);
 
     if ($stmt->execute()) {
-        header("Location: register.php?success=1"); // Chuyển hướng về trang đăng ký
+        echo json_encode(["success" => true, "message" => "Đăng ký thành công!"]);
     } else {
-        echo "Lỗi: " . $stmt->error;
+        echo json_encode(["success" => false, "message" => "Lỗi khi đăng ký: " . $stmt->error]);
     }
 
     $stmt->close();
+    $conn->close();
 }
-$conn->close();
 ?>

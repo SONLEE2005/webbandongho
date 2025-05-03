@@ -1,3 +1,39 @@
+<?php
+    session_start();
+    require_once 'includes/database.php';
+    
+    if (!isset($_SESSION['selectedProducts']) || !isset($_SESSION['selectedTotal'])) {
+        echo "Không có sản phẩm nào được chọn.";
+        exit;
+    }
+    
+    $db = new Database();
+    $selectedProducts = $_SESSION['selectedProducts'];
+    $total = $_SESSION['selectedTotal'];
+    
+    // Tạo danh sách sản phẩm cần thanh toán
+    $productsToCheckout = [];
+    foreach ($selectedProducts as $product_id => $quantity) {
+        // Truy vấn thông tin sản phẩm từ sanpham
+        $products = $db->query("SELECT * FROM sanpham WHERE MaSP = ?", [$product_id]);
+        if (!empty($products)) {
+            $product = $products[0];
+            $productsToCheckout[] = [
+                'id' => $product_id,
+                'name' => $product['TenSP'],
+                'price' => $product['Gia'],
+                'quantity' => intval($quantity),  // lấy đúng số lượng chọn
+                'image' => !empty($product['HinhAnh']) ? 'public/images/' . $product['HinhAnh'] : 'public/images/casio0.jpg',
+            ];
+        }
+    }
+
+    // Lấy thông tin người dùng
+    $customerName = isset($_SESSION['hoTen']) ? htmlspecialchars($_SESSION['hoTen']) : 'Chưa có tên';
+    $customerPhone = isset($_SESSION['soDienThoai']) ? htmlspecialchars($_SESSION['soDienThoai']) : 'Chưa có số';
+    $customerAddress = isset($_SESSION['diaChi']) ? htmlspecialchars($_SESSION['diaChi']) : 'Chưa có địa chỉ';
+    
+?> <!-- Thêm khúc này để lấy tên người dùng, email bắt đầu phiên làm việc-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +42,39 @@
     <title>Checkout | Timepiece</title>
     <link rel="stylesheet" href="public/css/style.css">
     <link rel="stylesheet" href="public/css/checkout.css">
+    <style> /* style cho phần menu tài khoản */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            cursor: pointer;
+            padding: 10px;
+            text-decoration: none;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 4px;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }        
+    </style>
     <style>
         /* Các cải tiến về layout và kiểu dáng */
         body {
@@ -144,18 +213,22 @@
         }
 
         .product-item img {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             object-fit: cover;
         }
 
         .product-info {
             display: flex;
-            align-items: center;
+            flex-direction: column; /* Đảm bảo chữ nằm dọc */
+            margin-left: 10px; /* Khoảng cách giữa ảnh và thông tin */
+        }
+
+        .product-info h4, .product-info span {
+            margin: 0; /* Loại bỏ margin để chúng không bị cách nhau quá xa */
         }
 
         .product-info h4 {
-            margin-left: 15px;
             font-size: 1.1rem;
             color: #333;
         }
@@ -164,6 +237,23 @@
             font-size: 0.9rem;
             color: #777;
         }
+
+        .quantity-control {
+            /* Đặt các nút và ô input ở bên phải của item */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .small-btn {
+            font-size: 13px;
+            padding: 6px 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
 
         .quantity-control {
             display: flex;
@@ -251,6 +341,8 @@
             background-color: #0056b3;
         }
 
+        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .checkout-container {
@@ -291,6 +383,15 @@
                     <li><a href="#">Collections</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="cart.php"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                    <li class="dropdown"> <!-- hiển thị tên người dùng sau khi đăng nhập -->
+                        <a href="#" class="dropbtn">
+                            <i class="fas fa-user"></i> 
+                            <?php echo  $customerName  ?>
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="./includes/logout.php" style="color: black">Logout</a>  
+                        </div>
+                    </li> <!--   tới đây -->
                 </ul>
             </nav>
         </div>
@@ -299,106 +400,125 @@
     <section class="checkout-section">
         <div class="container">
             <h2 class="section-title">Checkout</h2>
-            <div class="checkout-container">
-                <!-- Customer Info Section -->
+            <div class="checkout-container">        
                 <div class="checkout-form">
                     <h3>Shipping Information</h3>
-                    <div class="form-group">
-                        <label for="customerInfo">📌 Customer Info</label>
-                        <div id="customerInfo">
-                            <div><strong>Name:</strong> <span id="customerName">John Doe</span></div>
-                            <div><strong>Phone:</strong> <span id="customerPhone">123-456-7890</span></div>
-                            <div><strong>Address:</strong> 
-                                <span id="customerAddress">1234 Main St, City</span>
-                                <button class="edit-btn" onclick="openEditModal()">Edit</button>
+                    <form action="checkout_process.php" id="checkout_process" method="POST">
+                        <!-- Customer Info Section -->                       
+                        <div class="form-group">
+                            <label for="customerInfo">📌 Customer Info</label>
+                            <div id="customerInfo">
+                                <div name="customer_name"><strong>Name:</strong> <?= $customerName ?></div>
+                                <div name="customer_phone"><strong>Phone:</strong> <?= $customerPhone ?></div>
+                                <div><strong>Address:</strong> 
+                                    <span id="customerAddress" name="customer_address"><?= $customerAddress ?></span>
+                                    <button type="button" class="edit-btn" onclick="openEditModal()">Edit</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                <!-- Modal for editing address -->
-                <div class="modal" id="addressModal">
-                    <div class="modal-content">
-                        <h3>Edit Address</h3>
-                        <label for="newAddress">Choose from saved addresses or enter a new one:</label>
-                        <select id="savedAddresses" onchange="selectAddress()">
-                            <option value="">Select Address</option>
-                            <option value="1234 Main St, City">1234 Main St, City</option>
-                            <option value="5678 Another St, Town">5678 Another St, Town</option>
-                            <option value="Enter new address">Enter new address</option>
-                        </select>
-                        <br><br>
-                        <input type="text" id="newAddress" name="newAddress" placeholder="Enter new address" style="display:none;" />
-                        <br>
-                        <button onclick="saveAddress()">Save</button>
-                        <button onclick="closeEditModal()">Cancel</button>
-                    </div>
-                </div>
-                
-                <!-- Product List -->
-                <div class="product-list">
-                    <h3>Order Summary</h3>
-                    <div class="product-item">
-                        <div class="product-info">
-                            <img src="product-image.jpg" alt="Product Image">
-                            <h4>Product Name</h4>
-                            <span>Price: $25.00</span>
-                        </div>
-                        <div class="quantity-control">
-                            <button>-</button>
-                            <input type="text" value="1" readonly>
-                            <button>+</button>
-                        </div>
-                        <span>$25.00</span>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-info">
-                            <img src="product-image.jpg" alt="Product Image">
-                            <h4>Product Name</h4>
-                            <span>Price: $15.00</span>
-                        </div>
-                        <div class="quantity-control">
-                            <button>-</button>
-                            <input type="text" value="1" readonly>
-                            <button>+</button>
-                        </div>
-                        <span>$15.00</span>
-                    </div>
+                        <!-- Input ẩn để gửi qua POST -->
+                        <input type="hidden" name="customer_name" value="<?= htmlspecialchars($customerName) ?>">
+                        <input type="hidden" name="customer_phone" value="<?= htmlspecialchars($customerPhone) ?>">
+                        <input type="hidden" name="customer_address" id="customerAddressInput" value="<?= htmlspecialchars($customerAddress) ?>">
 
-                    <!-- Fee -->
-                    <div class="summary">
-                        <span>Fee:</span>
-                        <strong>$2.00</strong>
-                    </div>
-
-                    <!-- Discount promotion -->
-                    <div class="summary">
-                        <span>Discount promotion:</span>
-                        <strong>$0.00</strong>
-                    </div> 
+                        <!-- Modal for editing address -->
+                        <div class="modal" id="addressModal">
+                            <div class="modal-content">
+                                <h3>Edit Address</h3>
+                                <label for="newAddress">Choose from saved addresses or enter a new one:</label>
+                                <select id="savedAddresses" onchange="selectAddress()">
+                                    <option value="">Select Address</option>
+                                    <option value="<?=$customerAddress?>"><?=$customerAddress?></option>
+                                    <option value="Enter new address">Enter new address</option>
+                                </select>
+                                <br><br>
+                                <input type="text" id="newAddress" name="newAddress" placeholder="Enter new address" style="display:none;" />
+                                <br>
+                                <button type="button" onclick="saveAddress()">Save</button>
+                                <button type="button" onclick="closeEditModal()">Cancel</button>
+                            </div>
+                        </div>
                     
-                    <!-- Total -->
-                    <div class="summary">
-                        <span>Total:</span>
-                        <strong>$42.00</strong>
-                    </div>
-                </div>
+                        <!-- Product list -->
+                        <div class="product-list">
+                            <h3>Order Summary</h3>
 
-                <!-- Payment and Order Notes -->
-                <div class="form-group">
-                    <label>Payment Method</label><br>
-                    <input type="radio" name="payment" id="cod" value="cod" checked>
-                    <label for="cod">Cash on Delivery</label><br>
-                    <input type="radio" name="payment" id="online" value="online">
-                    <label for="online">Online Payment</label>
-                </div>
+                            <?php foreach ($productsToCheckout as $index => $product): ?>
+                                <div class="product-item">
+                                    <img src="<?= htmlspecialchars($product['image']) ?>" alt="Product Image" style="width:100px;height:100px;">
+                                    <div class="product-info">
+                                        <h4><?= htmlspecialchars($product['name']) ?></h4>
+                                        <span class="product-price" data-price="<?= $product['price'] ?>">
+                                            $<?= number_format($product['price'], 2, ',', '.') ?>
+                                        </span>
+                                    </div>
+                                    <div class="quantity-control">
+                                        <button type="button" onclick="decreaseQuantity(this)">-</button>
+                                        <input type="text" value="<?= $product['quantity'] ?>" readonly>
+                                        <button type="button" onclick="increaseQuantity(this)">+</button>
+                                    </div>
+                                    <span class="item-total">
+                                        $<?= number_format($product['price'] * $product['quantity'], 2, ',', '.') ?>
+                                    </span>
 
-                <div class="form-group">
-                    <label for="note">Order Note (optional)</label>
-                    <textarea id="note" name="note" rows="3" placeholder="e.g. Please call before delivery..."></textarea>
-                </div>
+                                    <!-- Các input hidden để gửi qua POST -->
+                                    <input type="hidden" name="products[<?= $index ?>][id]" value="<?= htmlspecialchars($product['id']) ?>">
+                                    <input type="hidden" name="products[<?= $index ?>][name]" value="<?= htmlspecialchars($product['name']) ?>">
+                                    <input type="hidden" name="products[<?= $index ?>][price]" value="<?= $product['price'] ?>">
+                                    <input type="hidden" name="products[<?= $index ?>][quantity]" value="<?= $product['quantity'] ?>">
 
-                <div class="form-group" style="display: flex;align-items: center;justify-content:center;">
-                    <button type="submit" class="btn">Confirm & Place Order</button>
+                                </div>
+                            <?php endforeach; ?>
+
+                            <!-- Discount promotion -->
+                            <div class="summary discount">
+                                <span>Discount promotion:</span>
+                                <strong id="discountAmount">$0,00</strong>
+
+                                <input type="hidden" name="discount" id="discountInput" value="0.00">
+
+                                <br><br>
+                                <button type="button" class="small-btn" id="showDiscountBtn" onclick="showDiscountInput()">Nhập mã giảm giá</button>
+
+                                <div id="discountCodeSection" style="display: none; margin-top: 10px;">
+                                    <input type="text" id="discountCodeInput" placeholder="Nhập mã giảm giá (TET2025 hoặc SUMMER25)">
+                                    <button type="button" onclick="applyDiscountCode()">Áp dụng</button>
+                                    <p id="discountMessage" style="color: green; font-weight: bold;"></p>
+                                </div>
+                            </div>
+
+
+                            <!-- Total -->
+                            <div class="summary total">
+                                <span>Total:</span>
+                                <strong>$0,00</strong>
+
+                                <input type="hidden" name="total" id="orderTotal" value="0.00">
+                            </div>
+                        </div>
+
+                        <!-- Payment -->
+                        <div class="form-group">
+                            <label>Payment Method</label><br>
+                            <input type="radio" name="payment" id="cod" value="cod" checked>
+                            <label for="cod">Cash on Delivery</label><br>
+                            <input type="radio" name="payment" id="online" value="online">
+                            <label for="online">Online Payment</label>
+                        </div>
+                        
+                        <!-- Order Notes -->
+                        <div class="form-group">
+                            <label for="note">Order Note (optional)</label>
+                            <textarea id="note" name="note" rows="3" placeholder="e.g. Please call before delivery..."></textarea>
+                        </div>
+                        
+                        <!-- Submit -->
+                        <div class="form-group" style="display: flex;align-items: center;justify-content:center;">
+                            <button type="submit" class="btn">Confirm & Place Order</button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -427,12 +547,152 @@
         }
 
         function saveAddress() {
-            const newAddress = document.getElementById("newAddress").value;
-            if (newAddress) {
-                document.getElementById("customerAddress").innerText = newAddress;
+            const selected = document.getElementById("savedAddresses").value;
+            const newAddressInput = document.getElementById("newAddress");
+            const addressInput = document.getElementById("customerAddressInput");
+            const addressDisplay = document.getElementById("customerAddress");
+
+            let finalAddress = selected;
+
+            if (selected === "Enter new address") {
+                finalAddress = newAddressInput.value;
             }
+
+            // Cập nhật hiển thị
+            addressDisplay.textContent = finalAddress;
+
+            // Cập nhật giá trị input hidden
+            addressInput.value = finalAddress;
+
             closeEditModal();
         }
+        let discount = 0; // Không còn giảm giá ngẫu nhiên
+
+        function showDiscountInput() {
+            document.getElementById("discountCodeSection").style.display = "block";
+            document.getElementById("showDiscountBtn").style.display = "none";
+        }
+
+        function updateDiscountDisplay(value) {
+            document.querySelector('#discountAmount').innerText = '$' + value.toLocaleString('vi-VN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            document.querySelector('#discountInput').value = value.toFixed(2);
+            updateOrderTotal();
+        }
+
+        function applyDiscountCode() {
+            const code = document.getElementById("discountCodeInput").value.trim().toUpperCase();
+            const message = document.getElementById("discountMessage");
+            let subtotal = 0;
+
+            document.querySelectorAll('.item-total').forEach(item => {
+                let itemText = item.innerText.replace('$', '').replace(/\./g, '').replace(',', '.');
+                subtotal += parseFloat(itemText);
+            });
+
+            if (code === "TET2025") {
+                discount = subtotal * 0.10;
+                message.innerText = "Áp dụng mã TET2025 thành công: Giảm giá 10% !";
+                message.style.color = "green";
+            } else if (code === "SUMMER25") {
+                discount = subtotal * 0.15;
+                message.innerText = "Áp dụng mã SUMMER25 thành công: Giảm giá 15% !";
+                message.style.color = "green";
+            } else {
+                discount = 0;
+                message.innerText = "Mã không hợp lệ";
+                message.style.color = "red";
+            }
+
+            updateDiscountDisplay(discount);
+        }
+
     </script>
+    <script>
+        // Hàm làm tròn lên bội số của 1000
+        function roundToNearest(value, multiple) {
+            return Math.round(value / multiple) * multiple;
+        }
+
+        
+
+        document.querySelector('.discount strong').innerText = '$' + discount.toLocaleString('vi-VN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        document.querySelector('#discountInput').value = discount.toFixed(2);
+
+        // Giảm số lượng sản phẩm
+        function decreaseQuantity(btn) {
+            let input = btn.nextElementSibling;
+            let quantity = parseInt(input.value);
+            if (quantity > 1) {
+                input.value = quantity - 1;
+                updateItemTotal(btn);
+            }
+        }
+
+        // Tăng số lượng sản phẩm
+        function increaseQuantity(btn) {
+            let input = btn.previousElementSibling;
+            let quantity = parseInt(input.value);
+            input.value = quantity + 1;
+            updateItemTotal(btn);
+        }
+
+        // Cập nhật tổng tiền của từng sản phẩm
+        function updateItemTotal(btn) {
+            let productItem = btn.closest('.product-item');
+            let price = parseFloat(productItem.querySelector('.product-price').getAttribute('data-price'));
+            let quantity = parseInt(productItem.querySelector('input').value);
+            let itemTotal = price * quantity;
+
+            // Cập nhật giá trị số lượng vào các input hidden
+            let quantityInput = productItem.querySelector('input[type="hidden"][name*="quantity"]');
+            if (quantityInput) {
+                quantityInput.value = quantity;
+            }
+
+            productItem.querySelector('.item-total').innerText = '$' + itemTotal.toLocaleString('vi-VN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            updateOrderTotal();
+        }
+
+        // Cập nhật tổng tiền đơn hàng
+        function updateOrderTotal() {
+            let itemTotals = document.querySelectorAll('.item-total');
+            let subtotal = 0;
+
+            itemTotals.forEach(item => {
+                let itemText = item.innerText
+                    .replace('$', '')           // bỏ $
+                    .replace(/\./g, '')         // bỏ dấu chấm ngăn cách hàng nghìn
+                    .replace(',', '.');         // chuyển phẩy thành chấm
+                subtotal += parseFloat(itemText);
+            });
+
+            // Tính tổng
+            let finalTotal = subtotal - discount;
+            if (finalTotal < 0) finalTotal = 0;
+
+            // Hiển thị tổng cuối
+            document.querySelector('.total strong').innerText = '$' + finalTotal.toLocaleString('vi-VN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            document.querySelector('#orderTotal').value = finalTotal.toFixed(2);
+        }
+
+        // Cập nhật tổng ban đầu khi trang load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateOrderTotal();
+        });
+    </script>
+
 </body>
 </html>

@@ -25,6 +25,32 @@
         #item-lists button:hover {
             background-color: #0056b3;
         }
+        @media (max-width: 768px) {
+            #item-lists ul {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            #item-lists button {
+                font-size: 16px;
+                padding: 8px 15px;
+                width: auto;
+                max-width: 200px;
+            }
+            #table-wrapper {
+                overflow-x: auto; /* Enable horizontal scrolling */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile devices */
+            }
+            table {
+                min-width: 700px; /* Ensure table doesn't shrink too much */
+            }
+        }
+        @media (max-width: 480px) {
+            #item-lists button {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -37,6 +63,11 @@
             <li id="status"><button>Shipping Status</button></li>
             <li id="statistic"><button>Statistic</button></li>
         </ul>
+    </div>
+    <div id="table-wrapper">
+        <table>
+            <!-- ...existing table content... -->
+        </table>
     </div>
     <script src="../script.js"></script>
     <script>

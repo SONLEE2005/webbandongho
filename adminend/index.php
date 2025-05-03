@@ -222,6 +222,66 @@
             background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
             transition: background-color 0.3s ease; /* Smooth transition for background color */
         }
+        #add-user {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        #add-user:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #add-user:active {
+            background-color: #3e8e41;
+            transform: scale(1);
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 60%; /* Adjust sidebar width for smaller screens */
+            }
+            #content-area {
+                padding: 10px;
+                height: calc(100vh - 150px); /* Adjust height for smaller screens */
+            }
+            #toggle-sidebar {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+            #close-sidebar {
+                padding: 5px 8px;
+                font-size: 0.9em;
+            }
+            #sidebar ul li button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            #sidebar {
+                width: 80%; /* Further adjust sidebar width for very small screens */
+            }
+            #toggle-sidebar {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+            #close-sidebar {
+                padding: 4px 6px;
+                font-size: 0.8em;
+            }
+            #sidebar ul li button {
+                font-size: 12px;
+                padding: 6px;
+            }
+            #content-area {
+                padding: 8px;
+                height: calc(100vh - 120px); /* Further adjust height */
+            }
+        }
     </style>
 </head>
 <body>

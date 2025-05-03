@@ -258,6 +258,54 @@
         #edit-overlay button[type="submit"]:hover {
             background-color: #45a049;
         }
+        @media (max-width: 768px) {
+            #prod {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            table {
+                font-size: 0.9em;
+                min-width: 900px; /* Ensure table doesn't shrink too much */
+            }
+            th, td {
+                padding: 5px;
+            }
+            #pagination button {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+            #add-product, #filter-products {
+                width: auto;
+                max-width: 200px;
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+            #table-wrapper {
+                overflow-x: auto; /* Enable horizontal scrolling */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile devices */
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                font-size: 0.8em;
+            }
+            table {
+                font-size: 0.8em;
+            }
+            form input, form select, form button {
+                font-size: 0.8em;
+                padding: 3px;
+            }
+            #pagination button {
+                font-size: 0.8em;
+                padding: 6px 8px;
+            }
+            #add-product {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -418,45 +466,47 @@
         </div>
     </div>
 
-    <table id="product-table">
-        <tr>
-            <td>Product ID</td>
-            <td>Product Name</td>
-            <td>Ma danh muc</td>
-            <td>Brand name</td>
-            <td>Price</td>
-            <td>Description</td>
-            <td>Image</td>
-            <td>Quantity</td>
-            <td>Creation date</td>
-            <td>Update time</td>
-            <td>Action</td>
-        </tr>
-        <?php foreach ($products as $product): ?>
-        <tr data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">
-            <td><?php echo htmlspecialchars($product['MaSP']); ?></td>
-            <td><?php echo htmlspecialchars($product['TenSP']); ?></td>
-            <td><?php echo htmlspecialchars($product['MaDanhMuc']); ?></td>
-            <td><?php echo htmlspecialchars($product['ThuongHieu']); ?></td>
-            <td>$<?php echo number_format($product['Gia'], 2); ?></td>
-            <td><?php echo htmlspecialchars($product['MoTa']); ?></td>
-            <td>
-                <?php if (!empty($product['HinhAnh'])): ?>
-                    <img src="uploads/<?php echo htmlspecialchars($product['HinhAnh']); ?>" alt="Image" width="50">
-                <?php else: ?>
-                    <span>No Image</span>
-                <?php endif; ?>
-            </td>
-            <td><?php echo htmlspecialchars($product['SoLuongTon']); ?></td>
-            <td><?php echo htmlspecialchars($product['NgayTao']); ?></td>
-            <td><?php echo htmlspecialchars($product['NgayCapNhat']); ?></td>
-            <td>
-                <button class="edit" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Edit</button>
-                <button class="delete" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Delete</button>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
+    <div id="table-wrapper">
+        <table id="product-table">
+            <tr>
+                <td>Product ID</td>
+                <td>Product Name</td>
+                <td>Ma danh muc</td>
+                <td>Brand name</td>
+                <td>Price</td>
+                <td>Description</td>
+                <td>Image</td>
+                <td>Quantity</td>
+                <td>Creation date</td>
+                <td>Update time</td>
+                <td>Action</td>
+            </tr>
+            <?php foreach ($products as $product): ?>
+            <tr data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">
+                <td><?php echo htmlspecialchars($product['MaSP']); ?></td>
+                <td><?php echo htmlspecialchars($product['TenSP']); ?></td>
+                <td><?php echo htmlspecialchars($product['MaDanhMuc']); ?></td>
+                <td><?php echo htmlspecialchars($product['ThuongHieu']); ?></td>
+                <td>$<?php echo number_format($product['Gia'], 2); ?></td>
+                <td><?php echo htmlspecialchars($product['MoTa']); ?></td>
+                <td>
+                    <?php if (!empty($product['HinhAnh'])): ?>
+                        <img src="uploads/<?php echo htmlspecialchars($product['HinhAnh']); ?>" alt="Image" width="50">
+                    <?php else: ?>
+                        <span>No Image</span>
+                    <?php endif; ?>
+                </td>
+                <td><?php echo htmlspecialchars($product['SoLuongTon']); ?></td>
+                <td><?php echo htmlspecialchars($product['NgayTao']); ?></td>
+                <td><?php echo htmlspecialchars($product['NgayCapNhat']); ?></td>
+                <td>
+                    <button class="edit" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Edit</button>
+                    <button class="delete" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Delete</button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
 
     <!-- Pagination controls -->
     <div id="pagination" style="text-align: center; margin: 20px 0;">
