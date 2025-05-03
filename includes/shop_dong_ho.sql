@@ -207,7 +207,8 @@ CREATE TABLE `sanpham` (
   `MoTa` text DEFAULT NULL,
   `HinhAnh` varchar(255) DEFAULT NULL,
   `SoLuongTon` int(11) DEFAULT NULL,
-  `NgayTao` datetime DEFAULT current_timestamp()
+  `NgayTao` datetime DEFAULT current_timestamp(),
+  `NgayCapNhat` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
