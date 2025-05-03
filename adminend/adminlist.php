@@ -120,6 +120,83 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
             background-color: #3e8e41;
             transform: scale(1);
         }
+
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+        .lock-btn, .unlock-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .lock-btn:hover, .unlock-btn:hover {
+            background-color: darkred;
+        }
+        @media (max-width: 768px) {
+            #adminlist {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            #table-wrapper {
+                overflow-x: auto; /* Enable horizontal scrolling */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile devices */
+            }
+            table {
+                min-width: 800px; /* Ensure table doesn't shrink too much */
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 5px;
+            }
+            #pagination button {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+            #add-admin {
+                width: auto;
+                max-width: 200px;
+            }
+            form {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            form input, form select, form button {
+                width: auto;
+                max-width: 200px;
+                font-size: 0.9em;
+                padding: 4px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                font-size: 0.8em;
+            }
+            table {
+                font-size: 0.8em;
+            }
+            form input, form select, form button {
+                font-size: 0.8em;
+                padding: 3px;
+            }
+            #pagination button {
+                font-size: 0.8em;
+                padding: 6px 8px;
+            }
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -145,45 +222,47 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
         </form>
         <button id="add-admin">Add Admin</button>
     </div>
-    <table id="admin-table">
-        <tr>
-            <th>Admin ID</th>
-            <th>Username</th> <!-- Display TenDangNhap -->
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Password</th> <!-- New Password column -->
-            <th>Role</th>
-            <th>Locked</th>
-            <th>Creation Date</th>
-            <th>Last Update</th>
-            <th>Action</th>
-        </tr>
-        <?php foreach ($admins as $admin): ?>
+    <div id="table-wrapper">
+        <table id="admin-table">
             <tr>
-                <td><?php echo htmlspecialchars($admin['MaAdmin']); ?></td>
-                <td><?php echo htmlspecialchars($admin['TenDangNhap']); ?></td> <!-- Display username -->
-                <td><?php echo htmlspecialchars($admin['HoTen']); ?></td>
-                <td><?php echo htmlspecialchars($admin['Email']); ?></td>
-                <td><?php echo htmlspecialchars($admin['MatKhau']); ?></td> <!-- Display password -->
-                <td><?php echo htmlspecialchars($admin['VaiTro']); ?></td>
-                <td><?php echo $admin['DaKhoa'] ? 'Yes' : 'No'; ?></td>
-                <td><?php echo htmlspecialchars($admin['NgayTao']); ?></td>
-                <td><?php echo htmlspecialchars($admin['NgayCapNhat']); ?></td>
-                <td>
-                    <button class="edit-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>" 
-                            data-username="<?php echo htmlspecialchars($admin['TenDangNhap']); ?>" 
-                            data-fullname="<?php echo htmlspecialchars($admin['HoTen']); ?>" 
-                            data-email="<?php echo htmlspecialchars($admin['Email']); ?>" 
-                            data-role="<?php echo htmlspecialchars($admin['VaiTro']); ?>">Edit</button>
-                    <?php if ($admin['DaKhoa']): ?>
-                        <button class="unlock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Unlock</button>
-                    <?php else: ?>
-                        <button class="lock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Lock</button>
-                    <?php endif; ?>
-                </td>
+                <th>Admin ID</th>
+                <th>Username</th> <!-- Display TenDangNhap -->
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Password</th> <!-- New Password column -->
+                <th>Role</th>
+                <th>Locked</th>
+                <th>Creation Date</th>
+                <th>Last Update</th>
+                <th>Action</th>
             </tr>
-        <?php endforeach; ?>
-    </table>
+            <?php foreach ($admins as $admin): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($admin['MaAdmin']); ?></td>
+                    <td><?php echo htmlspecialchars($admin['TenDangNhap']); ?></td> <!-- Display username -->
+                    <td><?php echo htmlspecialchars($admin['HoTen']); ?></td>
+                    <td><?php echo htmlspecialchars($admin['Email']); ?></td>
+                    <td><?php echo htmlspecialchars($admin['MatKhau']); ?></td> <!-- Display password -->
+                    <td><?php echo htmlspecialchars($admin['VaiTro']); ?></td>
+                    <td><?php echo $admin['DaKhoa'] ? 'Yes' : 'No'; ?></td>
+                    <td><?php echo htmlspecialchars($admin['NgayTao']); ?></td>
+                    <td><?php echo htmlspecialchars($admin['NgayCapNhat']); ?></td>
+                    <td>
+                        <button class="edit-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>" 
+                                data-username="<?php echo htmlspecialchars($admin['TenDangNhap']); ?>" 
+                                data-fullname="<?php echo htmlspecialchars($admin['HoTen']); ?>" 
+                                data-email="<?php echo htmlspecialchars($admin['Email']); ?>" 
+                                data-role="<?php echo htmlspecialchars($admin['VaiTro']); ?>">Edit</button>
+                        <?php if ($admin['DaKhoa']): ?>
+                            <button class="unlock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Unlock</button>
+                        <?php else: ?>
+                            <button class="lock-btn" data-id="<?php echo htmlspecialchars($admin['MaAdmin']); ?>">Lock</button>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
     <div id="pagination" style="text-align: center; margin: 20px 0;">
         <?php if ($currentPage > 1): ?>
             <button onclick="window.location.href='index.php?page=adminlist&pagenum=<?php echo $currentPage - 1; ?>'" style="margin-right: 10px;">Previous</button>
@@ -203,6 +282,7 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
         <div id="overlay-content" style="position: relative; margin: 10% auto; padding: 20px; background: white; width: 50%; border-radius: 10px;">
             <button id="close-overlay" style="position: absolute; top: 10px; right: 10px; background: red; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">X</button>
             <form id="admin-form" method="POST" action="admin_actions.php">
+                <input type="hidden" name="admin_id" id="admin-id"> <!-- Ensure admin_id is included -->
                 <h2 id="overlay-title">Add Admin</h2>
                 <input type="hidden" name="action" id="form-action" value="add">
                 <div style="margin-bottom: 10px;">
@@ -211,7 +291,7 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
                 </div>
                 <div style="margin-bottom: 10px;">
                     <label for="admin-password">Password (MatKhau):</label>
-                    <input type="password" id="admin-password" name="admin_password" required style="width: 100%; padding: 5px;">
+                    <input type="password" id="admin-password" name="admin_password" style="width: 100%; padding: 5px;"> <!-- Removed 'required' -->
                 </div>
                 <div style="margin-bottom: 10px;">
                     <label for="admin-fullname">Full Name (HoTen):</label>
@@ -258,11 +338,37 @@ $totalPages = ceil($totalAdmins / $itemsPerPage);
                 $('#form-action').val('edit');
                 $('#admin-id').val($(this).data('id'));
                 $('#admin-username').val($(this).data('username'));
-                $('#admin-password').val('');
-                $('#admin-fullname').val('');
-                $('#admin-email').val($(this).data('email'));
-                $('#admin-role').val($(this).data('role'));
+                $('#admin-password').val(''); // Leave password blank
+                $('#admin-fullname').val($(this).data('fullname')); // Pre-fill fullname
+                $('#admin-email').val($(this).data('email')); // Pre-fill email
+                $('#admin-role').val($(this).data('role')); // Pre-fill role
                 $('#overlay').fadeIn();
+            });
+
+            $('#admin-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const formData = $(this).serializeArray();
+                const action = $('#form-action').val();
+
+                if (action === 'edit') {
+                    // Remove empty fields from the form data, including password if left blank
+                    const filteredData = formData.filter(field => field.name !== 'admin_password' || field.value.trim() !== '');
+                    $.post('admin_actions.php', filteredData, function(response) {
+                        alert(response);
+                        location.reload();
+                    }).fail(function(xhr) {
+                        alert('Failed to update admin: ' + xhr.responseText);
+                    });
+                } else {
+                    // Handle add admin logic
+                    $.post('admin_actions.php', formData, function(response) {
+                        alert(response);
+                        location.reload();
+                    }).fail(function(xhr) {
+                        alert('Failed to add admin: ' + xhr.responseText);
+                    });
+                }
             });
 
             $('.lock-btn').on('click', function() {
