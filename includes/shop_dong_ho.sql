@@ -489,6 +489,14 @@ ALTER TABLE `thanhtoan`
   ADD CONSTRAINT `thanhtoan_ibfk_1` FOREIGN KEY (`MaDH`) REFERENCES `donhang` (`MaDH`);
 COMMIT;
 
+-- Thêm vô bảng donhang:
+ALTER TABLE donhang
+  ADD COLUMN GiamGia varchar(50) COLLATE utf8mb4_general_ci NOT NULL AFTER NgayDat,
+  ADD COLUMN GhiChu varchar(50) COLLATE utf8mb4_general_ci NOT NULL AFTER TongTien,
+  ADD COLUMN TenNguoiNhan varchar(50) COLLATE utf8mb4_general_ci NOT NULL AFTER GhiChu,
+  ADD COLUMN SoDienThoai int(11) NOT NULL AFTER TenNguoiNhan,
+  ADD COLUMN DiaChi varchar(50) COLLATE utf8mb4_general_ci NOT NULL AFTER SoDienThoai;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
