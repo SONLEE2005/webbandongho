@@ -35,14 +35,51 @@
             padding: 10px 16px;
             text-decoration: none;
             display: block;
-            border-radius: 4px;
         }
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
         .dropdown:hover .dropdown-content {
             display: block;
-        }        
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            width: 400px;
+            height: 500px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .modal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            color: #0e0d0d;
+            cursor: pointer;
+            transition: color 0.3s;
+            border-radius: 8px;
+            border: 1px solid red;
+            width: 30px;
+            text-align: center;
+            background-color: red;
+        }
+        .close-btn:hover {
+            transform: scale(1.1);
+        } 
     </style>
 </head>
 <body>
@@ -59,10 +96,15 @@
                     <li class="dropdown"> <!-- hiển thị tên người dùng sau khi đăng nhập -->
                         <a href="#" class="dropbtn">
                             <i class="fas fa-user"></i> 
-                            <?php echo  $tenNguoiDung  ?>
+                            <?php echo $isLoggedIn ? $tenNguoiDung : "Account"; ?>
                         </a>
                         <div class="dropdown-content">
-                            <a href="./includes/logout.php" style="color: black">Logout</a>  
+                            <?php if (!$isLoggedIn): ?>
+                                <a href="#" onclick="showModal('loginModal')">Login</a>
+                                <a href="#" onclick="showModal('registerModal')">Register</a>
+                            <?php else: ?>
+                                <a href="./includes/logout.php">Logout</a>
+                            <?php endif; ?>
                         </div>
                     </li> <!--   tới đây -->
                 </ul>
@@ -117,7 +159,49 @@
             <p class="copyright">© 2023 Timepiece. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Modal đăng nhập -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
+            <iframe src="includes/login.php" frameborder="0" style="width:100%; height:100%;"></iframe>
+        </div>
+    </div>
 
+    <!-- Modal đăng ký -->
+    <div id="registerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
+            <iframe src="includes/register.php" frameborder="0" style="width:100%; height:100%;"></iframe>
+        </div>
+    </div>
+    <script> // script cho phần thông báo, xin chào, chuyển đổi giữa đăng nhập đăng ký
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.get("success") === "1") {
+                alert("Thêm sản phẩm vào giỏ hàng thành công !");
+            }
+            if (urlParams.get("error") === "chuaDangNhap") {
+                alert("Yêu cầu đăng nhập để thêm sản phẩm vào giỏ hàng !");
+            }
+
+            // Search form submit event to redirect to products.php with search query
+            const searchForm = document.getElementById('search-form');
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const query = document.getElementById('search-input').value.trim();
+                if (query !== '') {
+                    window.location.href = 'products.php?search=' + encodeURIComponent(query);
+                }
+            });
+        };
+        function showModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
     <script src="public/js/main.js"></script>
 </body>
 </html>
