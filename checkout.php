@@ -31,7 +31,10 @@
     // Lấy thông tin người dùng
     $customerName = isset($_SESSION['hoTen']) ? htmlspecialchars($_SESSION['hoTen']) : 'Chưa có tên';
     $customerPhone = isset($_SESSION['soDienThoai']) ? htmlspecialchars($_SESSION['soDienThoai']) : 'Chưa có số';
-    $customerAddress = isset($_SESSION['diaChi']) ? htmlspecialchars($_SESSION['diaChi']) : 'Chưa có địa chỉ';
+    $customerAddressRaw = isset($_SESSION['diaChi']) ? htmlspecialchars($_SESSION['diaChi']) : 'Chưa có địa chỉ';
+    // Tách địa chỉ (nhiều địa chỉ cách nhau bằng dấu ;)
+    $addresses = array_map('trim', explode(';', $customerAddressRaw));
+    $defaultAddress = $addresses[0]; // Địa chỉ mặc định (đầu tiên)
     
 ?> <!-- Thêm khúc này để lấy tên người dùng, email bắt đầu phiên làm việc-->
 <!DOCTYPE html>
@@ -408,10 +411,10 @@
                         <div class="form-group">
                             <label for="customerInfo">📌 Customer Info</label>
                             <div id="customerInfo">
-                                <div name="customer_name"><strong>Name:</strong> <?= $customerName ?></div>
-                                <div name="customer_phone"><strong>Phone:</strong> <?= $customerPhone ?></div>
+                                <div name="customer_name"><strong>Name:</strong> <?= htmlspecialchars($customerName) ?></div>
+                                <div name="customer_phone"><strong>Phone:</strong> <?= htmlspecialchars($customerPhone) ?></div>
                                 <div><strong>Address:</strong> 
-                                    <span id="customerAddress" name="customer_address"><?= $customerAddress ?></span>
+                                    <span id="customerAddress" name="customer_address"><?= htmlspecialchars($defaultAddress) ?></span>
                                     <button type="button" class="edit-btn" onclick="openEditModal()">Edit</button>
                                 </div>
                             </div>
@@ -420,7 +423,7 @@
                         <!-- Input ẩn để gửi qua POST -->
                         <input type="hidden" name="customer_name" value="<?= htmlspecialchars($customerName) ?>">
                         <input type="hidden" name="customer_phone" value="<?= htmlspecialchars($customerPhone) ?>">
-                        <input type="hidden" name="customer_address" id="customerAddressInput" value="<?= htmlspecialchars($customerAddress) ?>">
+                        <input type="hidden" name="customer_address" id="customerAddressInput" value="<?= htmlspecialchars($defaultAddress) ?>">
 
                         <!-- Modal for editing address -->
                         <div class="modal" id="addressModal">
@@ -428,8 +431,11 @@
                                 <h3>Edit Address</h3>
                                 <label for="newAddress">Choose from saved addresses or enter a new one:</label>
                                 <select id="savedAddresses" onchange="selectAddress()">
-                                    <option value="">Select Address</option>
-                                    <option value="<?=$customerAddress?>"><?=$customerAddress?></option>
+                                    <?php foreach ($addresses as $addr): ?>
+                                        <option value="<?= htmlspecialchars($addr) ?>" <?= ($addr === $defaultAddress) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($addr) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                     <option value="Enter new address">Enter new address</option>
                                 </select>
                                 <br><br>
@@ -541,11 +547,10 @@
             const newAddressInput = document.getElementById("newAddress");
 
             if (selectedValue === "Enter new address") {
-                newAddressInput.style.display = "inline-block"; // Show input for new address
-                newAddressInput.value = ""; // Clear input
+                newAddressInput.style.display = "inline-block";
+                newAddressInput.value = "";
             } else {
-                newAddressInput.style.display = "none"; // Hide input
-                document.getElementById("newAddress").value = selectedValue;
+                newAddressInput.style.display = "none";
             }
         }
 
