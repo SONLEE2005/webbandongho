@@ -16,35 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantity = intval($_POST['quantity']);
 
     // Handle image uploads
-    $imageFilenames = [];
+    $imagePath = null;
     if (isset($_FILES['images']) && $_FILES['images']['error'][0] === UPLOAD_ERR_OK) {
-        foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
-            $fileName = basename($_FILES['images']['name'][$key]);
-            $targetPath = $uploadDir . $fileName;
+        $fileName = basename($_FILES['images']['name'][0]);
+        $targetPath = $uploadDir . $fileName;
 
-            if (move_uploaded_file($tmpName, $targetPath)) {
-                $imageFilenames[] = $fileName;
-            } else {
-                echo "Error uploading file: " . htmlspecialchars($_FILES['images']['name'][$key]) . "<br>";
-            }
+        if (move_uploaded_file($_FILES['images']['tmp_name'][0], $targetPath)) {
+            $imagePath = $targetPath; // Store the full path to the image
+        } else {
+            echo "Error uploading file: " . htmlspecialchars($_FILES['images']['name'][0]) . "<br>";
         }
     }
 
     // Insert product data into the database
-    $sql = "INSERT INTO sanpham (TenSP, ThuongHieu, Gia, MoTa, SoLuongTon)
-            VALUES ('$name', '$brand', $price, '$description', $quantity)";
+    $sql = "INSERT INTO sanpham (TenSP, ThuongHieu, Gia, MoTa, SoLuongTon, HinhAnh)
+            VALUES ('$name', '$brand', $price, '$description', $quantity, '$imagePath')";
 
     if ($conn->query($sql) === TRUE) {
-        // Get the last inserted product ID
-        $productId = $conn->insert_id;
-
-        // Save image filenames to the database (assuming you have an images table or store them in a comma-separated string)
-        if (!empty($imageFilenames)) {
-            $imageData = implode(',', $imageFilenames); // Store filenames as a comma-separated string
-            $updateSql = "UPDATE sanpham SET HinhAnh = '$imageData' WHERE MaSP = $productId";
-            $conn->query($updateSql);
-        }
-
         echo "Product added successfully!";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
