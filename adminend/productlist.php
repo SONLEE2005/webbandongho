@@ -310,32 +310,32 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div id="overlay" style="display: none; display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:10; padding-top: 60px;">
-        <div style="background-color:#fff; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px;">
-            <div>
-                <h1>Product Addition</h1>
-                <button id="close-overlay">X</button>
+    <div id="overlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 10; display: flex; justify-content: center; align-items: center;">
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.5em; margin: 0; color: #333;">Add Product</h1>
+                <button id="close-overlay" style="background-color: red; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">X</button>
             </div>
-            <form action="addproduct.php" method="post" enctype="multipart/form-data">
-                <label for="name">Product Name:</label>
-                <input type="text" id="name" name="name" required>
-    
-                <label for="brand">Brand Name:</label>
-                <input type="text" id="brand" name="brand" required>
-    
-                <label for="price">Price:</label>
-                <input type="number" step="0.01" id="price" name="price" required>
-    
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="4" cols="50" required></textarea>
-    
-                <label for="images">Images (Multiple):</label>
-                <input type="file" id="images" name="images[]" multiple required>
-    
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity" required>
-    
-                <button type="submit">Add product</button>
+            <form action="addproduct.php" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+                <label for="name" style="font-size: 0.9em; color: #555;">Product Name:</label>
+                <input type="text" id="name" name="name" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="brand" style="font-size: 0.9em; color: #555;">Brand Name:</label>
+                <input type="text" id="brand" name="brand" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="price" style="font-size: 0.9em; color: #555;">Price:</label>
+                <input type="number" step="0.01" id="price" name="price" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="description" style="font-size: 0.9em; color: #555;">Description:</label>
+                <textarea id="description" name="description" rows="4" cols="50" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;"></textarea>
+
+                <label for="images" style="font-size: 0.9em; color: #555;">Images (Multiple):</label>
+                <input type="file" id="images" name="images[]" multiple required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="quantity" style="font-size: 0.9em; color: #555;">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <button type="submit" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em;">Add Product</button>
             </form>
         </div>
     </div>
@@ -491,7 +491,7 @@
                 <td><?php echo htmlspecialchars($product['MoTa']); ?></td>
                 <td>
                     <?php if (!empty($product['HinhAnh'])): ?>
-                        <img src="uploads/<?php echo htmlspecialchars($product['HinhAnh']); ?>" alt="Image" width="50">
+                        <img src="<?php echo htmlspecialchars($product['HinhAnh']); ?>" alt="Image" width="50">
                     <?php else: ?>
                         <span>No Image</span>
                     <?php endif; ?>
@@ -551,29 +551,32 @@
             // Ensure the edit overlay is hidden on page load
             $('#edit-overlay').hide();
 
-            // Format price to include commas and two decimal places
-            function formatPrice(price) {
-                return parseFloat(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            }
+            // Ensure the add product overlay is hidden on page load
+            $('#overlay').hide();
 
             // Add Product overlay close button
             $('#close-overlay').on('click', function() {
-                $('#overlay').css('display', 'none');
-            });
-
-            // Edit Product overlay close button
-            $('#close-edit-overlay').on('click', function() {
-                $('#edit-overlay').css('display', 'none');
-            });
-
-            // Filter overlay close button
-            $('#close-filter-overlay').on('click', function() {
-                $('#filter-overlay').css('display', 'none');
+                $('#overlay').hide();
             });
 
             // Add Product button functionality
             $('#add-product').on('click', function() {
-                $('#overlay').css('display', 'block');
+                $('#overlay').css({
+                    display: 'flex',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                });
+            });
+
+            // Edit Product overlay close button
+            $('#close-edit-overlay').on('click', function() {
+                $('#edit-overlay').hide();
+            });
+
+            // Filter overlay close button
+            $('#close-filter-overlay').on('click', function() {
+                $('#filter-overlay').hide();
             });
 
             // Show Filter overlay
@@ -585,6 +588,11 @@
             $('#reset-filters').on('click', function() {
                 window.location.href = 'index.php?page=productlist';
             });
+
+            // Format price to include commas and two decimal places
+            function formatPrice(price) {
+                return parseFloat(price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
 
             // Edit button functionality
             $(document).on('click', '.edit', function() {
