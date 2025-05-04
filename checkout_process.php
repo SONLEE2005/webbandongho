@@ -32,6 +32,23 @@ $db = new Database();
 $conn = $db->getConnection(); 
 
 try {
+    // Cập nhật địa chỉ mới vào danh sách nếu chưa có
+    $currentAddresses = $_SESSION['diaChi'] ?? '';
+    $addressList = array_map('trim', explode(';', $currentAddresses));
+
+    // Nếu địa chỉ mới chưa tồn tại trong danh sách cũ thì thêm vào
+    if (!in_array(trim($diaChi), $addressList)) {
+        $addressList[] = trim($diaChi);
+        $updatedAddress = implode('; ', $addressList);
+
+        // Cập nhật session
+        $_SESSION['diaChi'] = $updatedAddress;
+
+        // Cập nhật vào bảng khachhang
+        $sqlUpdateAddress = "UPDATE khachhang SET DiaChi = ? WHERE MaKH = ?";
+        $db->query($sqlUpdateAddress, [$updatedAddress, $maKH]);
+    }
+    
     // Bắt đầu transaction
     $conn->begin_transaction();
 
