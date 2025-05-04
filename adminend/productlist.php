@@ -429,15 +429,6 @@
                     <label><input type="radio" name="alphabetical_order" value="z_to_a"> Z-A</label>
                 </div>
 
-                <!-- Watch Material -->
-                <h3 style="margin: 0; color: #333;">Watch Material</h3>
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label><input type="checkbox" name="material[]" value="Synthetic leather"> Synthetic Leather</label>
-                    <label><input type="checkbox" name="material[]" value="Metal string"> Metal String</label>
-                    <label><input type="checkbox" name="material[]" value="Automatic/mechanical"> Automatic/Mechanical</label>
-                    <label><input type="checkbox" name="material[]" value="Battery (Quartz)"> Battery (Quartz)</label>
-                </div>
-
                 <!-- Country of Origin -->
                 <h3 style="margin: 0; color: #333;">Country of Origin</h3>
                 <div style="position: relative;">
@@ -452,13 +443,6 @@
                         <div style="padding: 5px; cursor: pointer;" data-value="China">China</div>
                         <div style="padding: 5px; cursor: pointer;" data-value="Italy">Italy</div>
                     </div>
-                </div>
-
-                <!-- Glass Type -->
-                <h3 style="margin: 0; color: #333;">Glass Type</h3>
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label><input type="checkbox" name="glass_type[]" value="Saphire"> Saphire</label>
-                    <label><input type="checkbox" name="glass_type[]" value="Gorilla Glass"> Gorilla Glass</label>
                 </div>
 
                 <button type="submit" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">Apply</button>
