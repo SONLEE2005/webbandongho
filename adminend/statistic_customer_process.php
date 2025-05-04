@@ -46,7 +46,7 @@ if(!empty($condition)){
 
 $orderby = $sort == 1 ? "ASC" : "DESC";
 
-$sql = "SELECT kh.MaKH, kh.HoTen, SUM(dh.TongTien) AS TongTien
+$sql = "SELECT kh.MaKH, kh.HoTen, SUM(dh.TongTien) AS TongTien, COUNT(dh.MaDH) AS SoDonHang
 FROM donhang dh
 JOIN khachhang kh ON dh.MaKH = kh.MaKH
 $whereDate
@@ -61,6 +61,7 @@ while($row = $result->fetch_assoc()){
         <tr>
             <td> {$row["MaKH"]} </td>
             <td> {$row["HoTen"]} </td>
+            <td> {$row["SoDonHang"]} </td>
             <td> {$row["TongTien"]} </td>
         </tr>
     ";

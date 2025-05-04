@@ -52,9 +52,9 @@
         <p>&copy; 2023 Your Company. All rights reserved.</p>
         <p>Privacy Policy | Terms of Service</p>
         <p>Follow us on: 
-            <a href="#">Facebook</a> | 
-            <a href="#">Twitter</a> | 
-            <a href="#">Instagram</a>
+            <a href="https://www.facebook.com/login ">Facebook</a> | 
+            <a href="https://twitter.com/login">Twitter</a> | 
+            <a href="https://www.instagram.com/accounts/login/">Instagram</a>
         </p>    
     </div>
 </body>

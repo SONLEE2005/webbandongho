@@ -70,13 +70,13 @@
       <div class="form-group">
         <label for="password">Mật khẩu: </label>
         <input type="password" id="password" name="password" required>
-        <div style="margin-top: 8px;"><a href="#">Quên mật khẩu?</a></div> 
+        <!-- <div style="margin-top: 8px;"><a href="#">Quên mật khẩu?</a></div>  -->
       </div>
       <input type="submit" value="Đăng Nhập">
     </form>
 
     <div class="login-link">
-      Quay về <a href="../public/index.php">Trang người dùng</a>
+      Quay về <a href="../index.php">Trang người dùng</a>
     </div>
   </div>
 

@@ -5,56 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        #item-lists ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        #item-lists li {
-            margin: 10px 0;
-        }
-        #item-lists button {
-            font-size: 18px;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        #item-lists button:hover {
-            background-color: #0056b3;
-        }
-        @media (max-width: 768px) {
-            #item-lists ul {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-            #item-lists button {
-                font-size: 16px;
-                padding: 8px 15px;
-                width: auto;
-                max-width: 200px;
-            }
-            #table-wrapper {
-                overflow-x: auto; /* Enable horizontal scrolling */
-                -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile devices */
-            }
-            table {
-                min-width: 700px; /* Ensure table doesn't shrink too much */
-            }
-        }
-        @media (max-width: 480px) {
-            #item-lists button {
-                font-size: 14px;
-                padding: 6px 12px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div id="item-lists">
+    <!-- <div id="item-lists">
         <ul>
             <li id="home"><button>Home</button></li>
             <li id="prod-lists"><button>Product Lists</button></li>
@@ -65,9 +19,9 @@
         </ul>
     </div>
     <div id="table-wrapper">
-        <table>
+        <table> -->
             <!-- ...existing table content... -->
-        </table>
+        <!-- </table>
     </div>
     <script src="../script.js"></script>
     <script>
@@ -91,6 +45,6 @@
                 window.location.href = 'index.php?page=statistic';
             });
         });
-    </script>
+    </script> -->
 </body>
 </html>

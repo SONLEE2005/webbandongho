@@ -1,6 +1,6 @@
 <?php
     session_start();
-    $isLongin = isset($_SESSION["email"]);
+    $isLongin = isset($_SESSION["hoTen"]);
 ?>
 
 <!DOCTYPE html>

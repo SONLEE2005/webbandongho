@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (!isset($_SESSION["email"])) {
+if (!isset($_SESSION["hoTen"])) {
     header("Location: ../login_admin.php");
     exit();
 }
@@ -76,7 +76,7 @@ if (!isset($_SESSION["email"])) {
 
     form input[type="date"],
     form input[type="text"],
-    form select {
+    select {
         padding: 6px 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -95,6 +95,32 @@ if (!isset($_SESSION["email"])) {
 
     form button:hover {
         background-color: #0d6efd;
+    }
+
+
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .page-btn {
+        padding: 6px 12px;
+        margin: 0 3px;
+        background-color: #f0f0f0;
+        border: 1px solid #999;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .page-btn:hover {
+        background-color: #ddd;
+    }
+
+    .active-page {
+        background-color: #1e90ff;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
     }
 </style>
 
@@ -125,58 +151,56 @@ if (!isset($_SESSION["email"])) {
     <button type="button" onclick="resetFilter();">Làm Mới</button>
 </form>
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Mã Đơn Hàng</th>
-            <th>Tên Khách Hàng</th>
-            <th>Địa Chỉ</th>
-            <th>Ngày Đặt</th>
-            <th>Trạng Thái</th>
-            <th>Hành Động</th>
-        </tr>
-    </thead>
-
-    <tbody id="orderTable">
-
-    </tbody>
-</table>
+<div id="orderTable"></div>
+<div id="pagination"></div>
 
 <script>
+    let currentPage = 1;
+
     function updateStatus(maDH, newStatus) {
         if (!confirm("Bạn Có Chắc Muốn Cập Nhật Trạng Thái Đơn Hàng ?")) return;
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "update_status.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onload = function() {
-            alert(this.responseText);
-            location.reload();
-        }
-        xhr.send("id=" + maDH + "&status=" + newStatus);
-    }
-
-    function fetchOrder(){
-        const form = document.getElementById("form_filter");
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-
-        fetch("load_orders.php?" + params)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("orderTable").innerHTML = html;
+        fetch("update_status.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({id: maDH, status: newStatus})
+            })
+            .then(res => res.json())    
+            .then(data => {
+                // alert(data);
+                fetchOrder(currentPage);
             });
     }
 
-    document.getElementById("form_filter").addEventListener("submit", function(e){
+    function fetchOrder(page = 1) {
+        currentPage = page;
+        const form = document.getElementById("form_filter");
+        const formData = new FormData(form);
+        formData.append("page", page);
+        const params = new URLSearchParams(formData).toString();
+        fetch("load_orders.php?" + params)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("orderTable").innerHTML = data.table;
+                document.getElementById("pagination").innerHTML = data.pagination;
+            });
+    }
+
+    function goToPage(page) {
+        fetchOrder(page);
+    }
+
+    document.getElementById("form_filter").addEventListener("submit", function(e) {
         e.preventDefault();
-        fetchOrder();
+        fetchOrder(1);
     })
 
     function resetFilter() {
         document.getElementById("form_filter").reset();
-        fetchOrder();
+        fetchOrder(1);
     }
 
-    window.addEventListener("DOMContentLoaded", fetchOrder);
+    window.addEventListener("DOMContentLoaded", () => fetchOrder(1));
 </script>

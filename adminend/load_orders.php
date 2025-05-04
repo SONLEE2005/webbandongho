@@ -34,6 +34,15 @@ if (isset($_GET["location"])) {
     $location = "";
 }
 
+if (isset($_GET["page"])) {
+    $page = intval($_GET["page"]);
+} else {
+    $page = 1;
+}
+
+$limit = 5;
+$offset = ($page - 1) * $limit;
+
 $condition = [];
 
 if ($filter_status !== "") {
@@ -58,14 +67,29 @@ if (!empty($condition)) {
     $where = 'WHERE ' . implode(' AND ', $condition);
 }
 
+$sqlCountRow = "SELECT COUNT(dh.MaDH) AS Total
+FROM donhang dh
+JOIN khachhang kh ON dh.MaKH = kh.MaKH
+$where";
+
+$queryResult = $conn->query($sqlCountRow);
+$totalResult = $queryResult->fetch_assoc();
+$totalRow = $totalResult["Total"];
+$totalPages = ceil($totalRow / $limit);
+
 $sql = "SELECT dh.MaDH, kh.HoTen, dh.DiaChi, dh.NgayDat, dh.TrangThai
 FROM `donhang` dh
 JOIN khachhang kh
 ON dh.MaKH = kh.MaKH 
 $where
-ORDER BY dh.NgayDat DESC";
+ORDER BY dh.NgayDat DESC
+LIMIT ? OFFSET ?";
 
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $limit, $offset);
+$stmt->execute();
+
+$result = $stmt->get_result();
 
 $status = [
     0 => "Chưa Xác Nhận",
@@ -74,8 +98,22 @@ $status = [
     3 => "Đã Hủy Đơn"
 ];
 
+$html = "<table border='1' cellpadding = '8' cellspacing ='0'>
+    <thead>
+        <tr>
+            <th>Mã Đơn Hàng</th>
+            <th>Tên Khách Hàng</th>
+            <th>Địa Chỉ</th>
+            <th>Ngày Đặt</th>
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+
+    <tbody>";
+
 while ($row = $result->fetch_assoc()) {
-     echo "<tr>
+    $html .= "<tr>
         <td> {$row["MaDH"]} </td>
         <td> {$row["HoTen"]} </td>
         <td> {$row["DiaChi"]} </td>
@@ -84,14 +122,32 @@ while ($row = $result->fetch_assoc()) {
         <td>
             <select onchange=\"updateStatus({$row["MaDH"]}, this.value )\" style=\"min-width: 180px; text-align: center;\">
                 <option value=''>Cập Nhật</option>";
-                
-                for ($i = $row["TrangThai"] + 1; $i <= 3; $i++) {
-                    echo "<option value='$i'>{$status[$i]}</option>";
-                }
-            echo "</select>
+
+    for ($i = $row["TrangThai"] + 1; $i <= 3; $i++) {
+        $html .= "<option value='$i'>{$status[$i]}</option>";
+    }
+    $html .= "</select>
         </td>
     </tr>";
 }
+
+$html .= " </tbody>
+</table>";
+
+$pagination = "";
+if ($totalPages > 1) {
+    $pagination .= "<div class='pagination'>";
+    for ($i = 1; $i <= $totalPages; $i++) {
+        $active = "";
+        if ($i == $page) {
+            $active = "active-page";
+        }
+        $pagination .= "<button class='page-btn $active' onclick='goToPage($i)'>$i</button>";
+    }
+    $pagination .= "</div>";
+}
+
+echo json_encode(["table" => $html, "pagination" => $pagination]);
 
 $conn->close();
 ?>

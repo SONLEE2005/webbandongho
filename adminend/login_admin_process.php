@@ -35,7 +35,7 @@ if( $_SERVER["REQUEST_METHOD"] == "POST"){
 
             echo "
                 <script>
-                    window.parent.location.href = '../adminend/index.php?success=1';
+                    window.parent.location.href = './index.php?success=1';
                 </script>
             ";
         } else {

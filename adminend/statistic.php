@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (!isset($_SESSION["email"])) {
-    header("Location: ../login_admin.php");
+if (!isset($_SESSION["hoTen"])) {
+    header("Location: ./login_admin.php");
     exit();
 }
 ?>
@@ -46,7 +46,7 @@ if (!isset($_SESSION["email"])) {
     th,
     td {
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 6px;
         text-align: center;
     }
 
@@ -128,6 +128,35 @@ if (!isset($_SESSION["email"])) {
     .tab-content.active {
         display: block;
     }
+
+    #customer th, #customer td {
+        padding: 10px;
+    }
+
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .page-btn {
+        padding: 6px 12px;
+        margin: 0 3px;
+        background-color: #f0f0f0;
+        border: 1px solid #999;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .page-btn:hover {
+        background-color: #ddd;
+    }
+
+    .active-page {
+        background-color: #1e90ff;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+    }
 </style>
 
 <h2>Thống Kê</h2>
@@ -151,16 +180,16 @@ if (!isset($_SESSION["email"])) {
 </form>
 
 <ul class="tab-menu">
-    <li class="tab-item " data-tab="customer">Thống Kê Khách Hàng</li>
-    <li class="tab-item active" data-tab="order">Thống Kê Đơn Hàng</li>
+    <li class="tab-item active" data-tab="customer">Thống Kê Khách Hàng</li>
+    <li class="tab-item " data-tab="order">Thống Kê Đơn Hàng</li>
 </ul>
 
-<div id="customer" class="tab-content ">
+<div id="customer" class="tab-content active">
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
             <th>Mã Khách Hàng</th>
             <th>Tên Khách Hàng</th>
-            <!-- <th>Tổng Số Đơn Hàng</th> -->
+            <th>Tổng Số Đơn Hàng</th>
             <th>Tổng Tiền Mua Hàng</th>
         </thead>
 
@@ -171,19 +200,9 @@ if (!isset($_SESSION["email"])) {
     </table>
 </div>
 
-<div id="order" class="tab-content active">
-    <table>
-        <thead>
-            <th>Mã Đơn Hàng</th>
-            <th>Tên Khách Hàng</th>
-            <th>Ngày Mua Hàng</th>
-            <th>Tổng Giá Trị Mua Hàng</th>
-            <th>Xem Chi Tiết</th>
-        </thead>
-
-        <tbody id="tableOrder"></tbody>
-
-    </table>
+<div id="order" class="tab-content ">
+    <div id="tableOrder"></div>
+    <div id="pagination"></div>
 </div>
 
 <div id="orderDetailModel" style="display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
@@ -212,6 +231,7 @@ if (!isset($_SESSION["email"])) {
 </div>
 
 <script>
+    let currentPage = 1;
     document.querySelectorAll(".tab-item").forEach(item => {
         item.addEventListener("click", function(){
             document.querySelectorAll(".tab-item").forEach(tab => tab.classList.remove("active"));
@@ -234,16 +254,23 @@ if (!isset($_SESSION["email"])) {
             });
     }
 
-    function fetchStatisticOrder() {
+    function fetchStatisticOrder(page = 1) {
+        currentPage = page;
         const form = document.getElementById("form_filter_statistic");
         const formData = new FormData(form);
+        formData.append("page", page);
         const params = new URLSearchParams(formData).toString();
 
         fetch("statistic_order_process.php?" + params)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("tableOrder").innerHTML = html;
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("tableOrder").innerHTML = data.table
+                document.getElementById("pagination").innerHTML = data.pagination;
             })
+    }
+
+    function goToPage(page){
+        fetchStatisticOrder(page);
     }
 
     document.getElementById("form_filter_statistic").addEventListener("submit", function(e) {
@@ -252,7 +279,7 @@ if (!isset($_SESSION["email"])) {
         if (activeTab === "customer") {
             fetchStatisticCustomer();
         } else if (activeTab === "order") {
-            fetchStatisticOrder();
+            fetchStatisticOrder(1);
         }
     })
 
@@ -262,7 +289,7 @@ if (!isset($_SESSION["email"])) {
         if (activeTab === "customer") {
             fetchStatisticCustomer();
         } else if (activeTab === "order") {
-            fetchStatisticOrder();
+            fetchStatisticOrder(page);
         }
     }
 
@@ -283,6 +310,6 @@ if (!isset($_SESSION["email"])) {
         document.getElementById("orderDetailModel").style.display = "none";
     }
 
-    window.addEventListener("DOMContentLoaded", fetchStatisticOrder);
-    window.addEventListener("DOMContentLoaded", fetchStatisticCustomer);
+    window.addEventListener("DOMContentLoaded", () => fetchStatisticOrder(1));
+    window.addEventListener("DOMContentLoaded", () => fetchStatisticCustomer());
 </script>
