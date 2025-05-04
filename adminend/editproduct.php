@@ -42,11 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($images !== null) {
             // Handle image upload logic here
-            $imagePath = 'uploads/' . basename($images['name'][0]);
+            $uploadDir = 'uploads/';
+            $imageName = basename($images['name'][0]);
+            $imagePath = $uploadDir . $imageName;
+
+            // Ensure the uploads directory exists
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
             if (move_uploaded_file($images['tmp_name'][0], $imagePath)) {
                 $fields[] = "HinhAnh = ?";
                 $params[] = $imagePath;
                 $types .= 's';
+            } else {
+                echo "Error uploading image.";
+                exit();
             }
         }
 
