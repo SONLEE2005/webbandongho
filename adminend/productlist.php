@@ -428,7 +428,6 @@
                     <label><input type="radio" name="alphabetical_order" value="a_to_z"> A-Z</label>
                     <label><input type="radio" name="alphabetical_order" value="z_to_a"> Z-A</label>
                 </div>
-
                 <!-- Country of Origin -->
                 <h3 style="margin: 0; color: #333;">Country of Origin</h3>
                 <div style="position: relative;">
@@ -475,9 +474,9 @@
                 <td><?php echo htmlspecialchars($product['MoTa']); ?></td>
                 <td>
                     <?php if (!empty($product['HinhAnh'])): ?>
-                        <img src="<?php echo htmlspecialchars($product['HinhAnh']); ?>" alt="Image" width="50">
+                        <img src="<?= '../public/images/' . htmlspecialchars($product['HinhAnh']) ?>" alt="Image" width="50">
                     <?php else: ?>
-                        <span>No Image</span>
+                        <img src="public/images/casio0.jpg" alt="Default Image" width="50">
                     <?php endif; ?>
                 </td>
                 <td><?php echo htmlspecialchars($product['SoLuongTon']); ?></td>
