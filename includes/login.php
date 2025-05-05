@@ -139,6 +139,10 @@
                 document.getElementById("email").focus();
             }
 
+            if (urlParams.get("error") === "daKhoa") {
+                alert("Tài khoản đã bị khoá!");
+            }
+
             // Nếu có tên đăng nhập trước đó, điền lại vào ô để người dùng không cần nhập lại
             let eMail = urlParams.get("email");
             if (eMail) {
