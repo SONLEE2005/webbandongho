@@ -58,16 +58,29 @@ try {
 
     $maDH = $db->getLastInsertId();
 
-    // Chèn vào chitietdonhang
+    // Chèn vào chitietdonhang và cập nhật số lượng tồn trong sanpham
     foreach ($_POST['products'] as $product) {
         $maSP = intval($product['id']);
         $soLuong = intval($product['quantity']);
         $donGia = floatval($product['price']);
         $thanhTien = $soLuong * $donGia;
 
-        $sql2 = "INSERT INTO chitietdonhang (MaDH, MaSP, SoLuong, DonGia, ThanhTien)
-                 VALUES (?, ?, ?, ?, ?)";
-        $db->query($sql2, [$maDH, $maSP, $soLuong, $donGia, $thanhTien]);
+        // Kiểm tra tồn kho trước khi thêm vô chi tiết đơn hàng 
+        $sqlCheckStock = "SELECT SoLuongTon FROM sanpham WHERE MaSP = ?";
+        $stockResult = $db->fetchOne($sqlCheckStock, [$maSP]);
+
+        if ($stockResult && $stockResult['SoLuongTon'] >= $soLuong) {
+            // Chèn vào chi tiết đơn hàng
+            $sql2 = "INSERT INTO chitietdonhang (MaDH, MaSP, SoLuong, DonGia, ThanhTien)
+                    VALUES (?, ?, ?, ?, ?)";
+            $db->query($sql2, [$maDH, $maSP, $soLuong, $donGia, $thanhTien]);
+
+            // Trừ số lượng tồn trong sản phẩm
+            $sqlUpdateStock = "UPDATE sanpham SET SoLuongTon = SoLuongTon - ? WHERE MaSP = ?";
+            $db->query($sqlUpdateStock, [$soLuong, $maSP]);
+        } else {
+            throw new Exception("Sản phẩm mã $maSP không đủ hàng trong kho.");
+        }
     }
 
     //Chèn vào thanhtoan
