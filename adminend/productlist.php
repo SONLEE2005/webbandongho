@@ -306,6 +306,95 @@
                 padding: 6px 12px;
             }
         }
+
+        /* Adjusted overlay styles */
+        #overlay, #edit-overlay, #filter-overlay {
+            display: none;
+            position: fixed;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for centering */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%; /* Make the overlay wider */
+            overflow-y: auto; /* Add scrolling for content that exceeds the height */
+            z-index: 1000;
+            text-align: left;
+        }
+
+        #overlay h1, #edit-overlay h1, #filter-overlay h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        #overlay button#close-overlay, #edit-overlay button#close-edit-overlay, #filter-overlay button#close-filter-overlay {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        #overlay form, #edit-overlay form, #filter-overlay form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #overlay input, #edit-overlay input, #filter-overlay input,
+        #overlay textarea, #edit-overlay textarea, #filter-overlay textarea,
+        #overlay select, #edit-overlay select, #filter-overlay select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        #overlay button[type="submit"], #edit-overlay button[type="submit"], #filter-overlay button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #overlay button[type="submit"]:hover, #edit-overlay button[type="submit"]:hover, #filter-overlay button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Fullscreen shadow background */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Darker shadow */
+            z-index: 999; /* Ensure it covers the entire screen */
+        }
+
+        /* Adjusted add product overlay styles */
+        #overlay > div {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            max-height: 85%; /* Increased height for better usability */
+            overflow-y: auto; /* Add scrolling for content that exceeds the height */
+            text-align: left;
+            margin: auto; /* Center the overlay content */
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -329,11 +418,47 @@
                 <label for="description" style="font-size: 0.9em; color: #555;">Description:</label>
                 <textarea id="description" name="description" rows="4" cols="50" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;"></textarea>
 
-                <label for="images" style="font-size: 0.9em; color: #555;">Images (Multiple):</label>
+                <label for="images" style="font-size: 0.9em; color: #555;">Images:</label>
                 <input type="file" id="images" name="image" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
 
                 <label for="quantity" style="font-size: 0.9em; color: #555;">Quantity:</label>
                 <input type="number" id="quantity" name="quantity" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="thuonghieu" style="font-size: 0.9em; color: #555;">Brand (Thương Hiệu):</label>
+                <input type="text" id="thuonghieu" name="thuonghieu" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="xuatxu" style="font-size: 0.9em; color: #555;">Origin (Xuất Xứ):</label>
+                <input type="text" id="xuatxu" name="xuatxu" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="doituong" style="font-size: 0.9em; color: #555;">Target Audience (Đối Tượng):</label>
+                <input type="text" id="doituong" name="doituong" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="dongsp" style="font-size: 0.9em; color: #555;">Product Line (Dòng Sản Phẩm):</label>
+                <input type="text" id="dongsp" name="dongsp" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="khangnuoc" style="font-size: 0.9em; color: #555;">Water Resistance (Kháng Nước):</label>
+                <input type="text" id="khangnuoc" name="khangnuoc" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="loaimay" style="font-size: 0.9em; color: #555;">Movement Type (Loại Máy):</label>
+                <input type="text" id="loaimay" name="loaimay" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="chatlieukinh" style="font-size: 0.9em; color: #555;">Glass Material (Chất Liệu Kính):</label>
+                <input type="text" id="chatlieukinh" name="chatlieukinh" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="chatlieuday" style="font-size: 0.9em; color: #555;">Strap Material (Chất Liệu Dây):</label>
+                <input type="text" id="chatlieuday" name="chatlieuday" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="sizemat" style="font-size: 0.9em; color: #555;">Case Size (Size Mặt):</label>
+                <input type="text" id="sizemat" name="sizemat" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="doday" style="font-size: 0.9em; color: #555;">Thickness (Độ Dày):</label>
+                <input type="text" id="doday" name="doday" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="series" style="font-size: 0.9em; color: #555;">Series:</label>
+                <input type="text" id="series" name="series" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+
+                <label for="tienich" style="font-size: 0.9em; color: #555;">Features (Tiện Ích):</label>
+                <textarea id="tienich" name="tienich" rows="4" style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;"></textarea>
 
                 <button type="submit" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em;">Add Product</button>
             </form>
@@ -357,11 +482,47 @@
                 <label for="edit-description">Description:</label>
                 <textarea id="edit-description" name="description" rows="4" cols="50" required></textarea>
     
-                <label for="edit-images">Image edit:</label>
+                <label for="edit-images">Images (Multiple):</label>
                 <input type="file" id="edit-images" name="images">
     
                 <label for="edit-quantity">Quantity:</label>
                 <input type="number" id="edit-quantity" name="quantity" required>
+
+                <label for="edit-thuonghieu">Brand (Thương Hiệu):</label>
+                <input type="text" id="edit-thuonghieu" name="thuonghieu" required>
+
+                <label for="edit-xuatxu">Origin (Xuất Xứ):</label>
+                <input type="text" id="edit-xuatxu" name="xuatxu" required>
+
+                <label for="edit-doituong">Target Audience (Đối Tượng):</label>
+                <input type="text" id="edit-doituong" name="doituong" required>
+
+                <label for="edit-dongsp">Product Line (Dòng Sản Phẩm):</label>
+                <input type="text" id="edit-dongsp" name="dongsp" required>
+
+                <label for="edit-khangnuoc">Water Resistance (Kháng Nước):</label>
+                <input type="text" id="edit-khangnuoc" name="khangnuoc" required>
+
+                <label for="edit-loaimay">Movement Type (Loại Máy):</label>
+                <input type="text" id="edit-loaimay" name="loaimay" required>
+
+                <label for="edit-chatlieukinh">Glass Material (Chất Liệu Kính):</label>
+                <input type="text" id="edit-chatlieukinh" name="chatlieukinh" required>
+
+                <label for="edit-chatlieuday">Strap Material (Chất Liệu Dây):</label>
+                <input type="text" id="edit-chatlieuday" name="chatlieuday" required>
+
+                <label for="edit-sizemat">Case Size (Size Mặt):</label>
+                <input type="text" id="edit-sizemat" name="sizemat" required>
+
+                <label for="edit-doday">Thickness (Độ Dày):</label>
+                <input type="text" id="edit-doday" name="doday" required>
+
+                <label for="edit-series">Series:</label>
+                <input type="text" id="edit-series" name="series" required>
+
+                <label for="edit-tienich">Features (Tiện Ích):</label>
+                <textarea id="edit-tienich" name="tienich" rows="4"></textarea>
     
                 <button type="submit">Save Changes</button>
             </form>
@@ -379,7 +540,7 @@
         <button id="add-product">Add Product</button>
     </div>
 
-    <div id="filter-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 10;">
+    <div id="filter-overlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 10;">
         <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-height: 90%; overflow-y: auto; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h1 style="font-size: 1.5em; margin: 0; color: #333;">Filter Products</h1>
@@ -476,7 +637,7 @@
                     <?php if (!empty($product['HinhAnh'])): ?>
                         <img src="<?= '../public/images/' . htmlspecialchars($product['HinhAnh']) ?>" alt="Image" width="50">
                     <?php else: ?>
-                        <img src="public/images/casio0.jpg" alt="Default Image" width="50">
+                        <img src="public/images/default-placeholder.png" alt="Default Image" width="50">
                     <?php endif; ?>
                 </td>
                 <td><?php echo htmlspecialchars($product['SoLuongTon']); ?></td>
@@ -485,6 +646,7 @@
                 <td>
                     <button class="edit" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Edit</button>
                     <button class="delete" data-id="<?php echo htmlspecialchars($product['MaSP']); ?>">Delete</button>
+                    <button onclick="window.location.href='proddetails.php?MaSP=<?php echo htmlspecialchars($product['MaSP']); ?>'">Detail</button>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -559,12 +721,16 @@
 
             // Filter overlay close button
             $('#close-filter-overlay').on('click', function() {
-                $('#filter-overlay').hide();
+                $('.overlay').hide(); // Hide the background overlay
+                $('#filter-overlay').hide(); // Hide the filter overlay
             });
 
             // Show Filter overlay
             $('#filter-products').on('click', function() {
-                $('#filter-overlay').css('display', 'block');
+                if (!$('.overlay').is(':visible')) { // Check if the overlay is already visible
+                    $('.overlay').show(); // Show the background overlay
+                    $('#filter-overlay').show(); // Show the filter overlay
+                }
             });
 
             // Reset filters and search
@@ -580,21 +746,42 @@
             // Edit button functionality
             $(document).on('click', '.edit', function() {
                 const productId = $(this).data('id');
-                const row = $(this).closest('tr');
-                const name = row.find('td:nth-child(2)').text();
-                const brand = row.find('td:nth-child(4)').text();
-                const price = row.find('td:nth-child(5)').text().replace('$', '').replace(/,/g, ''); // Remove $ and commas
-                const description = row.find('td:nth-child(6)').text() || ''; // Default to empty string if null
-                const quantity = parseInt(row.find('td:nth-child(8)').text());
 
-                $('#edit-product-id').val(productId);
-                $('#edit-name').val(name);
-                $('#edit-brand').val(brand);
-                $('#edit-price').val(price); // Set the price value correctly
-                $('#edit-description').val(description);
-                $('#edit-quantity').val(quantity);
+                // Fetch product details from chitietsanpham
+                $.ajax({
+                    url: 'getproductdetails.php',
+                    type: 'GET',
+                    data: { productId: productId },
+                    success: function(response) {
+                        const productDetails = JSON.parse(response);
 
-                $('#edit-overlay').css('display', 'block');
+                        // Fill the form with the fetched data
+                        $('#edit-product-id').val(productDetails.MaSP);
+                        $('#edit-name').val(productDetails.TenSP);
+                        $('#edit-brand').val(productDetails.ThuongHieu);
+                        $('#edit-price').val(productDetails.Gia);
+                        $('#edit-description').val(productDetails.MoTa);
+                        $('#edit-quantity').val(productDetails.SoLuongTon);
+                        $('#edit-thuonghieu').val(productDetails.ThuongHieu);
+                        $('#edit-xuatxu').val(productDetails.XuatXu);
+                        $('#edit-doituong').val(productDetails.DoiTuong);
+                        $('#edit-dongsp').val(productDetails.DongSanPham);
+                        $('#edit-khangnuoc').val(productDetails.KhangNuoc);
+                        $('#edit-loaimay').val(productDetails.LoaiMay);
+                        $('#edit-chatlieukinh').val(productDetails.ChatLieuKinh);
+                        $('#edit-chatlieuday').val(productDetails.ChatLieuDay);
+                        $('#edit-sizemat').val(productDetails.SizeMat);
+                        $('#edit-doday').val(productDetails.DoDay);
+                        $('#edit-series').val(productDetails.Series);
+                        $('#edit-tienich').val(productDetails.TienIch);
+
+                        // Show the edit overlay
+                        $('#edit-overlay').css('display', 'block');
+                    },
+                    error: function(xhr) {
+                        alert("Error fetching product details: " + xhr.responseText);
+                    }
+                });
             });
 
             // Submit Edit Product form
@@ -821,12 +1008,16 @@
 
             // Close filter overlay
             $('#close-filter-overlay').on('click', function() {
-                $('#filter-overlay').hide();
+                $('.overlay').hide(); // Hide the background overlay
+                $('#filter-overlay').hide(); // Hide the filter overlay
             });
 
             // Show filter overlay
             $('#filter-products').on('click', function() {
-                $('#filter-overlay').show();
+                if (!$('.overlay').is(':visible')) { // Check if the overlay is already visible
+                    $('.overlay').show(); // Show the background overlay
+                    $('#filter-overlay').show(); // Show the filter overlay
+                }
             });
         });
 
