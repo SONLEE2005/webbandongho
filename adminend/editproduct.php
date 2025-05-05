@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = $_POST['price'] ?? null;
     $description = $_POST['description'] ?? null;
     $quantity = $_POST['quantity'] ?? null;
-    $images = isset($_FILES['images']) && $_FILES['images']['error'][0] === 0 ? $_FILES['images'] : null;
+    $images = isset($_FILES['images']) && $_FILES['images']['error'] === UPLOAD_ERR_OK ? $_FILES['images'] : null;
 
     if ($productId > 0) {
         $fields = [];
@@ -41,22 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $types .= 'i';
         }
         if ($images !== null) {
-            // Handle image upload logic here
-            $uploadDir = 'uploads/';
-            $imageName = basename($images['name'][0]);
-            $imagePath = $uploadDir . $imageName;
+            $uploadDir = '../public/images/';
+            $fileName = basename($images['name']);
+            $targetPath = $uploadDir . $fileName;
 
-            // Ensure the uploads directory exists
+            // Ensure the target directory exists
             if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+                mkdir($uploadDir, 0755, true);
             }
 
-            if (move_uploaded_file($images['tmp_name'][0], $imagePath)) {
+            if (move_uploaded_file($images['tmp_name'], $targetPath)) {
                 $fields[] = "HinhAnh = ?";
-                $params[] = $imagePath;
+                $params[] = $fileName; // Store only the filename
                 $types .= 's';
             } else {
-                echo "Error uploading image.";
+                echo "Failed to move uploaded file to target directory: $targetPath<br>";
                 exit();
             }
         }
@@ -90,3 +89,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
+?>
