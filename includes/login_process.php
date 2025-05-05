@@ -16,18 +16,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $matKhau = $_POST["password"];
 
     // Kiểm tra xem thông tin tài khoản (email) có tồn tại không
-    $sql = "SELECT MaKH, HoTen, MatKhau, SoDienThoai, DiaChi FROM khachhang WHERE Email = ?";
+    $sql = "SELECT MaKH, HoTen, MatKhau, SoDienThoai, DaKhoa, DiaChi FROM khachhang WHERE Email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $eMail);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($maKH, $hoTen, $hashed_password, $soDienThoai, $diaChi);
+        $stmt->bind_result($maKH, $hoTen, $hashed_password, $soDienThoai, $daKhoa, $diaChi);
         $stmt->fetch();
         
         // Kiểm tra mật khẩu
         if (password_verify($matKhau, $hashed_password)) {
+            if($daKhoa=="Yes"){
+                header("Location: login.php?error=daKhoa");
+                exit();
+            }
             $_SESSION["email"] = $eMail; // Lưu tên đăng nhập vào session
             $_SESSION["hoTen"] = $hoTen; // Lưu họ tên
             $_SESSION["diaChi"]= $diaChi;  //Lưu địa chỉ
