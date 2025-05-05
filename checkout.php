@@ -512,8 +512,16 @@
                             <label>Payment Method</label><br>
                             <input type="radio" name="payment" id="cod" value="cod" checked>
                             <label for="cod">Cash on Delivery</label><br>
+
                             <input type="radio" name="payment" id="online" value="online">
                             <label for="online">Online Payment</label>
+                        </div>
+                        <!-- Thông tin ngân hàng -->
+                        <div id="bank-info" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc;">
+                            <strong>🏦 Chi nhánh Thành Phố Hà Nội</strong><br>
+                            Ngân hàng: <strong>TP Bank</strong><br>
+                            STK: <strong>819 8888 6666</strong><br>
+                            Chủ tài khoản: <strong>VŨ DUY LONG</strong>
                         </div>
                         
                         <!-- Order Notes -->
@@ -678,6 +686,24 @@
         // Cập nhật tổng ban đầu khi trang load
         document.addEventListener('DOMContentLoaded', function () {
             updateOrderTotal();
+        });
+
+        // Hiển thị thông tin ngân hàng
+        document.addEventListener('DOMContentLoaded', function () {
+            const cod = document.getElementById('cod');
+            const online = document.getElementById('online');
+            const bankInfo = document.getElementById('bank-info');
+
+            function toggleBankInfo() {
+                if (online.checked) {
+                    bankInfo.style.display = 'block';
+                } else {
+                    bankInfo.style.display = 'none';
+                }
+            }
+
+            cod.addEventListener('change', toggleBankInfo);
+            online.addEventListener('change', toggleBankInfo);
         });
     </script>
 </body>
