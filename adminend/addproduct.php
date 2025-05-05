@@ -2,7 +2,7 @@
 include 'databases/db_connection.php';
 
 // Directory to store uploaded images
-$uploadDir = 'uploads/';
+$uploadDir = '../public/images/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -15,17 +15,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $conn->real_escape_string($_POST['description']);
     $quantity = intval($_POST['quantity']);
 
-    // Handle image uploads
+    // Handle single image upload
     $imagePath = null;
-    if (isset($_FILES['images']) && $_FILES['images']['error'][0] === UPLOAD_ERR_OK) {
-        $fileName = basename($_FILES['images']['name'][0]);
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $fileName = basename($_FILES['image']['name']);
         $targetPath = $uploadDir . $fileName;
 
-        if (move_uploaded_file($_FILES['images']['tmp_name'][0], $targetPath)) {
-            $imagePath = $targetPath; // Store the full path to the image
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+            $imagePath = $fileName; // Store only the filename
         } else {
-            echo "Error uploading file: " . htmlspecialchars($_FILES['images']['name'][0]) . "<br>";
+            echo "Failed to move uploaded file to target directory: $targetPath<br>";
+            exit();
         }
+    } else {
+        echo "No file uploaded or file upload error.<br>";
+        exit();
+    }
+
+    // Debugging the image path
+    if ($imagePath === null) {
+        echo "Image Path is null.<br>";
+        exit();
     }
 
     // Insert product data into the database
