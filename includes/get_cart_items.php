@@ -64,6 +64,7 @@ foreach ($cart_query as $cart_item) {
                 class="custom-checkbox" 
                 name="selected_products[' . htmlspecialchars($product_id) . ']" 
                 data-price="' . floatval($price) . '"
+                data-stock="' . intval($product['SoLuongTon']) . '"
             >';
 
     // Nút xóa
@@ -153,11 +154,20 @@ document.querySelectorAll('.custom-checkbox').forEach(cb => {
 // Gắn sự kiện cho nút tăng/giảm số lượng
 document.querySelectorAll('.increase-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        let productId = btn.dataset.id;
-        let qtyInput = document.getElementById('qty-' + productId);
-        let currentQty = parseInt(qtyInput.value) || 0;
-        qtyInput.value = currentQty + 1;
-        updateSelectedTotal();
+        const productId = btn.dataset.id;
+        const qtyInput = document.getElementById('qty-' + productId);
+        const currentQty = parseInt(qtyInput.value) || 0;
+
+        // Lấy số lượng tồn kho từ checkbox
+        const checkbox = document.querySelector(`.custom-checkbox[name="selected_products[${productId}]"]`);
+        const maxStock = parseInt(checkbox.dataset.stock) || 0;
+
+        if (currentQty < maxStock) {
+            qtyInput.value = currentQty + 1;
+            updateSelectedTotal();
+        } else {
+            alert("Không thể vượt quá số lượng tồn kho (" + maxStock + ")");
+        }
     });
 });
 
