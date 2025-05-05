@@ -330,7 +330,7 @@
                 <textarea id="description" name="description" rows="4" cols="50" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;"></textarea>
 
                 <label for="images" style="font-size: 0.9em; color: #555;">Images (Multiple):</label>
-                <input type="file" id="images" name="images[]" multiple required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
+                <input type="file" id="images" name="image" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
 
                 <label for="quantity" style="font-size: 0.9em; color: #555;">Quantity:</label>
                 <input type="number" id="quantity" name="quantity" required style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em;">
@@ -357,8 +357,8 @@
                 <label for="edit-description">Description:</label>
                 <textarea id="edit-description" name="description" rows="4" cols="50" required></textarea>
     
-                <label for="edit-images">Images (Multiple):</label>
-                <input type="file" id="edit-images" name="images[]" multiple>
+                <label for="edit-images">Image edit:</label>
+                <input type="file" id="edit-images" name="images">
     
                 <label for="edit-quantity">Quantity:</label>
                 <input type="number" id="edit-quantity" name="quantity" required>
